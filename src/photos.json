@@ -1,0 +1,814 @@
+{
+  "photos": [
+    {
+      "id": "20250927-1197",
+      "src": "photographs/20250927-1197.jpg",
+      "thumb": "photographs/thumb/20250927-1197.webp",
+      "medium": "photographs/med/20250927-1197.webp",
+      "full": "photographs/full/20250927-1197.webp",
+      "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAADwBACdASoUABkAPzmMulWvKSWjKA1R4CcJbAAALfigADEt9cKHiTjGBa8/KRhUYAAA/uvdHoVd8t4rgxTQokEAQYJIITceiG02rTkaE+rMEJrbzp7FbOD9RO8di5xB0+he+NHyRn6p69oXOGV6on47Ry5u0EpH8pr74M6R8B6ge1L4paSiYnf5Juy9Ax7mX4j06szgAAA=",
+      "width": 3712,
+      "height": 4640,
+      "exif": {
+        "focalLength": "24mm",
+        "aperture": "ƒ/3.5",
+        "shutterSpeed": "1/1250s",
+        "iso": "ISO 3200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20250929-7969",
+      "src": "photographs/20250929-7969.jpg",
+      "thumb": "photographs/thumb/20250929-7969.webp",
+      "medium": "photographs/med/20250929-7969.webp",
+      "full": "photographs/full/20250929-7969.webp",
+      "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAACQBACdASoUABkAPzmQvlgvKaYjqAqp4CcJQBadAhrEPTLR21goFhlgtc+7otAA/rIJPo78nyl1UmFpxHmsAeGxFI/A5sXJPU7i9Yaf3yWacQW8dMPH8OHVSOCUmUYpRom7vtWJOMKsMZoFC6XGOmBWXMp2eJ/Pcq2e7J49Rt0ulbjMRiKTawAA",
+      "width": 3241,
+      "height": 4051,
+      "exif": {
+        "focalLength": "38mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/60s",
+        "iso": "ISO 200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251001-8811",
+      "src": "photographs/20251001-8811.jpg",
+      "thumb": "photographs/thumb/20251001-8811.webp",
+      "medium": "photographs/med/20251001-8811.webp",
+      "full": "photographs/full/20251001-8811.webp",
+      "lqip": "data:image/webp;base64,UklGRqwAAABXRUJQVlA4IKAAAABwBACdASoUABQAPzmUwVmvKicjqAgB4CcJaQAAKdUvmPVAy8LAoNTiLLMZMAD8LlfY0sNZ1MwOPlw7U5XbAU1jjcs21fqgzDCAkbVT12U5MgnfCo7MVDaV0EpvXkgBkAPrB2SAOcdSKyPdYdBFG/S2VKpHYWIa3w60rxca+OH1bbPjGEWdcc+KrTvhw+uOGtLTijyKZil89jNfTzay5AAA",
+      "width": 2983,
+      "height": 2983,
+      "exif": {
+        "focalLength": "30mm",
+        "aperture": "ƒ/11",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 3200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251001-8901",
+      "src": "photographs/20251001-8901.jpg",
+      "thumb": "photographs/thumb/20251001-8901.webp",
+      "medium": "photographs/med/20251001-8901.webp",
+      "full": "photographs/full/20251001-8901.webp",
+      "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAACQBACdASoUABkAPzmKu1YvKSWjsBgIAeAnCWkAAC2q8gmm8pSO7BGaPXTSUgAA/ujQDfqebHve6oiklVzTNmO3+g/JtQ9a2XuW3WvLjlpKaJmmzkuwSq25OXSGXkpIu9vRdCsF8+pJVQ7mhWZBUC1EgfhMeBKAAAA=",
+      "width": 2499,
+      "height": 3124,
+      "exif": {
+        "focalLength": "33mm",
+        "aperture": "ƒ/18",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 3200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251001-9075",
+      "src": "photographs/20251001-9075.jpg",
+      "thumb": "photographs/thumb/20251001-9075.webp",
+      "medium": "photographs/med/20251001-9075.webp",
+      "full": "photographs/full/20251001-9075.webp",
+      "lqip": "data:image/webp;base64,UklGRsQAAABXRUJQVlA4ILgAAACwBACdASoUABkAPzmKu1WvKSYjKA1R4CcJbAAAJ/hxGbAGyO5T63MUj59J3MmkAPrp+wDqVNwdwCVel5GzdG57/zS++1Ct8Uqa79ZycFxZfUZqOlfnwAq0dSbK0SHmgh8yaZcbeEU35wO6j8Gf2ugeWc6/g+/77i2imoco2nPL6Q+ApTrxb942LKAQSf3bamNgX9jPnVJkL0yOnmwb5LGm7AYNeXvY+Gkh4UWkrxERI0EzzvssA2AA",
+      "width": 1254,
+      "height": 1568,
+      "exif": {
+        "focalLength": "23mm",
+        "aperture": "ƒ/4.5",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 3200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251001-9984",
+      "src": "photographs/20251001-9984.jpg",
+      "thumb": "photographs/thumb/20251001-9984.webp",
+      "medium": "photographs/med/20251001-9984.webp",
+      "full": "photographs/full/20251001-9984.webp",
+      "lqip": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAADwAwCdASoUABkAPzGEtFOuqSUisAwB0CYJZQDGfCHfUJqr6CLAG53AAP7r69bFj+HpHO3DXNbYJHvPPMJIBKH3eL2T4u7xequsJ60rKoIypzcgAAA=",
+      "width": 1795,
+      "height": 2244,
+      "exif": {
+        "focalLength": "17mm",
+        "aperture": "ƒ/3.5",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 110"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251002-0641",
+      "src": "photographs/20251002-0641.jpg",
+      "thumb": "photographs/thumb/20251002-0641.webp",
+      "medium": "photographs/med/20251002-0641.webp",
+      "full": "photographs/full/20251002-0641.webp",
+      "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAAAwBQCdASoUABkAPzmMwFcvKScjqAqp4CcJQAHPmZ/RKSdBMMGMQWg564YB67Tw1JLgAAD+6QaCmD4vrWilvOM0UU8JGiktX1JMO+UVFs5IX83HPtlCA1VqSTRUZFb0yKId5T0VNw9a812wamvYD00LnFm8HGhicB8KjZTwAAA=",
+      "width": 1754,
+      "height": 2192,
+      "exif": {
+        "focalLength": "37mm",
+        "aperture": "ƒ/5.3",
+        "shutterSpeed": "1/4000s",
+        "iso": "ISO 500"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251003-1335",
+      "src": "photographs/20251003-1335.jpg",
+      "thumb": "photographs/thumb/20251003-1335.webp",
+      "medium": "photographs/med/20251003-1335.webp",
+      "full": "photographs/full/20251003-1335.webp",
+      "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAADQBACdASoUABkAPzmOuVcvKaUjqA1R4CcJaQAAIXKxpwkn/apqdES3LDYCLydZAAD+iLgr/qQ+cSyXQi0GM83zEDv9KlzQHZQO6qEv3TQjBQO51X0keT7ioJXw7+5luEui1ob5ssw3vBSZOk2o5LlNNvXxH239XEA2QLQAAAA=",
+      "width": 3712,
+      "height": 4640,
+      "exif": {
+        "focalLength": "42mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/125s",
+        "iso": "ISO 1250"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251030-7601",
+      "src": "photographs/20251030-7601.jpg",
+      "thumb": "photographs/thumb/20251030-7601.webp",
+      "medium": "photographs/med/20251030-7601.webp",
+      "full": "photographs/full/20251030-7601.webp",
+      "lqip": "data:image/webp;base64,UklGRqgAAABXRUJQVlA4IJwAAADwBACdASoUABQAPzmUwVmvKicjqAgB4CcJbACdAAwbqZIl5K+GtCo+gfx9rzL5TeAA3ZDvoa8aDw4AMwN0yTgLFvDRaAOATK+qZuj49+D6ohlHqxQIivkyh6XjrEo2psKttiw1PGjWnW7rUMOt53S6VVg2ShKw2pVYmPECQcfGFSiezxQZ4xPhmPI+krIKlLna/0Q0BBRD7NlAAAA=",
+      "width": 3400,
+      "height": 3400,
+      "exif": {
+        "focalLength": "56mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 800"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251107-1271",
+      "src": "photographs/20251107-1271.jpg",
+      "thumb": "photographs/thumb/20251107-1271.webp",
+      "medium": "photographs/med/20251107-1271.webp",
+      "full": "photographs/full/20251107-1271.webp",
+      "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAABQBACdASoUABQAPzmMulYvKaWjsBgIAeAnCWUAuOQPV4CSWd94SISH0GoAAP7ZQ9DLkEHw6D/UxHARe6wJlukSoB8kFvBbHsYM3YCg8ETg0glXWaRs36Amslhm+u9jw5mAU0wwAAA=",
+      "width": 3157,
+      "height": 3157,
+      "exif": {
+        "focalLength": "50mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/30s",
+        "iso": "ISO 800"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251109-1637",
+      "src": "photographs/20251109-1637.jpg",
+      "thumb": "photographs/thumb/20251109-1637.webp",
+      "medium": "photographs/med/20251109-1637.webp",
+      "full": "photographs/full/20251109-1637.webp",
+      "lqip": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAACQBACdASoUABQAPzmOwFcvKacjqAqp4CcJYwDE2BEc1VtBxFyedCYbQgQkAYgA/sOFDUU8onPii3ArIFCITR0oFUDYJfFOSPwFEmwQAHQcRUZ1JH21vG0GXGz2wRcFv3IJoaVTEwET3+5feCAAAA==",
+      "width": 3712,
+      "height": 3712,
+      "exif": {
+        "focalLength": "37mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/60s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251109-2001",
+      "src": "photographs/20251109-2001.jpg",
+      "thumb": "photographs/thumb/20251109-2001.webp",
+      "medium": "photographs/med/20251109-2001.webp",
+      "full": "photographs/full/20251109-2001.webp",
+      "lqip": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAABwBACdASoUABQAPy2AtVOuqCUisAwB0CWJZQC90CHY4gf222Ct76koD+MkAAD+0yQckQfBCDfXP1jnS/p3xBu7EMEuhJfOvGzuAUwJtHSNOynfyQIcZuPay1JnZHN6JjIpIb7Gs6AAAA==",
+      "width": 3686,
+      "height": 3686,
+      "exif": {
+        "focalLength": "43mm",
+        "aperture": "ƒ/6.3",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 400"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251110-2170",
+      "src": "photographs/20251110-2170.jpg",
+      "thumb": "photographs/thumb/20251110-2170.webp",
+      "medium": "photographs/med/20251110-2170.webp",
+      "full": "photographs/full/20251110-2170.webp",
+      "lqip": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAABwBACdASoUABQAPzmUwFmvKiajqAgB4CcJYwC7ABEAW75dfPlryjjXIaSoAAD9S+CPD1u9m6qSes6P5+mVdy03/Lmpv91RGk0eVca0q03adCBTEygyPBuFFsQtQNssACXFVyWl7nE7r2sK6b98x7EjfvcH0VKOY+8kLqkq+B6IxQAA",
+      "width": 2645,
+      "height": 2645,
+      "exif": {
+        "focalLength": "23mm",
+        "aperture": "ƒ/4.2",
+        "shutterSpeed": "1/125s",
+        "iso": "ISO 3200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251112-2797",
+      "src": "photographs/20251112-2797.jpg",
+      "thumb": "photographs/thumb/20251112-2797.webp",
+      "medium": "photographs/med/20251112-2797.webp",
+      "full": "photographs/full/20251112-2797.webp",
+      "lqip": "data:image/webp;base64,UklGRoIAAABXRUJQVlA4IHYAAABwBACdASoUABQAPzmMuVYvKSUjqA1R4CcJbADCr8CA0ZqmBBL3h5N1lbrnYAD+gRYU5D3hkT2CCw2NyHzQp5v2H56BGIwNy/C9vSC5YnEq00VrOkzN1gW1ZARBxTmbDMxHzcY4nSNB0FDEHKQUbrlln7KdcAAA",
+      "width": 3564,
+      "height": 3564,
+      "exif": {
+        "focalLength": "31mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 3200"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251115-2004",
+      "src": "photographs/20251115-2004.jpg",
+      "thumb": "photographs/thumb/20251115-2004.webp",
+      "medium": "photographs/med/20251115-2004.webp",
+      "full": "photographs/full/20251115-2004.webp",
+      "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAABwBACdASoUABkAPzmSvlmvKaYjqAgB4CcJaQAAGwwrdPYabTU4EtpMyDX/gAChJ4U9nQ3luf0Ap3VBn0+0hwRSdMQbESki2RTpG02tP/E3tSmz8z4u/1Qy2Bkty8RyREXz5Qteoh7ZRFSgwRBh0HOTtqX1yNxBIAA=",
+      "width": 1862,
+      "height": 2327,
+      "exif": {
+        "focalLength": "7mm",
+        "aperture": "ƒ/1.8",
+        "shutterSpeed": "1/1400s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251122-3873",
+      "src": "photographs/20251122-3873.jpg",
+      "thumb": "photographs/thumb/20251122-3873.webp",
+      "medium": "photographs/med/20251122-3873.webp",
+      "full": "photographs/full/20251122-3873.webp",
+      "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAACwBACdASoUABkAPzmOu1YvKiYjsBgIAeAnCUAToAEIuMil12Rtpk6ibe9+aWMAAPVj/hiw1+ALjUChUCQxPDjeRY/BuD9+wW1vOqxjtiB/IkVSStB5jrU9IjeXU18UY1RAPHj7UJzR5Mj0dVn8FfdDEJKtACAbT009ogEeg0SITG5uFb8AAA==",
+      "width": 1477,
+      "height": 1846,
+      "exif": {
+        "focalLength": "16mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 160"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251126-0486",
+      "src": "photographs/20251126-0486.jpg",
+      "thumb": "photographs/thumb/20251126-0486.webp",
+      "medium": "photographs/med/20251126-0486.webp",
+      "full": "photographs/full/20251126-0486.webp",
+      "lqip": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADwAwCdASoUAA8APzmGuVOvKSWisAgB4CcJQBjeg8Blv8JljTmlliwsAP5XhGdYsVMZb4cgYiUMong7+mvUdve6DsILg0dYvhNas0FpMSbGRoY4OeBVYN5sd2BkzwYYc/cAAA==",
+      "width": 4612,
+      "height": 3459,
+      "exif": {
+        "focalLength": "68mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 500"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251129-1898",
+      "src": "photographs/20251129-1898.jpg",
+      "thumb": "photographs/thumb/20251129-1898.webp",
+      "medium": "photographs/med/20251129-1898.webp",
+      "full": "photographs/full/20251129-1898.webp",
+      "lqip": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAQBACdASoUAA8APzmGulQvKSWjMAgB4CcJQBhUBshgbAMptXBpvzllAADifJyV4oAtwVJ2nRtFy2Sq2atzd7kaINknZgCojGRYYXvWk17PwA/aHu5gUBkxTZxUPdKgPkKODBbxdKLgZ3DYAAA=",
+      "width": 2756,
+      "height": 2067,
+      "exif": {
+        "focalLength": "28mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/125s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251129-2007",
+      "src": "photographs/20251129-2007.jpg",
+      "thumb": "photographs/thumb/20251129-2007.webp",
+      "medium": "photographs/med/20251129-2007.webp",
+      "full": "photographs/full/20251129-2007.webp",
+      "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAAAQBQCdASoUABQAPzmUwVmvKicjqAgB4CcJZQDKAA+x/j+ilwuQqXvkNpH5h7qIAKIAAPYQFLLCbKBAiOpxZSesacbAkYbhK82MszvupF+93GcPSvhsHTnrxywSKCd428oJk3XHPKl6iSwyUqxEbBi36ltGLVWhY09e4eDmGQCRxqu08QAAAA==",
+      "width": 3553,
+      "height": 3553,
+      "exif": {
+        "focalLength": "28mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 160"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251129-3031",
+      "src": "photographs/20251129-3031.jpg",
+      "thumb": "photographs/thumb/20251129-3031.webp",
+      "medium": "photographs/med/20251129-3031.webp",
+      "full": "photographs/full/20251129-3031.webp",
+      "lqip": "data:image/webp;base64,UklGRp4AAABXRUJQVlA4IJIAAABwBACdASoUABQAPzmUwVmvKicjqAgB4CcJQAAEsF7wNlInszBIrKUPljS4gAD+ePQCoPFH7G/brPC2QMlDNYrXY6I5HG+XtlewzBYLrXklurYLuzJ9xvOYSOAvHgY57GWSyGe112yO7iGSfTFk2wQ+u58nvPBy1YbfpmYKMmilRfmNEbbh007bQL3xxIGwyQAAAA==",
+      "width": 1778,
+      "height": 1778,
+      "exif": {
+        "focalLength": "40mm",
+        "aperture": "ƒ/4",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 1100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251201-3567",
+      "src": "photographs/20251201-3567.jpg",
+      "thumb": "photographs/thumb/20251201-3567.webp",
+      "medium": "photographs/med/20251201-3567.webp",
+      "full": "photographs/full/20251201-3567.webp",
+      "lqip": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAACwAwCdASoUAA8APzmEuVOvKKWisAgB4CcJaQAAPsKPZaSQBfukAAD7dL3sfh9YZo+5KPfSud2Gz9v+s2reVuLrDGUrdSUyhn1gdeuzCDHRl8LPCMDRL55cxWVdmN2J7y56jPGoyAAAAA==",
+      "width": 3844,
+      "height": 2883,
+      "exif": {
+        "focalLength": "28mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251201-3967",
+      "src": "photographs/20251201-3967.jpg",
+      "thumb": "photographs/thumb/20251201-3967.webp",
+      "medium": "photographs/med/20251201-3967.webp",
+      "full": "photographs/full/20251201-3967.webp",
+      "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADQBACdASoUABkAPzmQu1gvKaWjqAqp4CcJZQDDcA3ythLHgVcTy0ajusi7jCrlAAD+22r9upym/viruwXZMmHilVDkyuf5TdJD8TzlzRnssC6NiUJygkW3H7p41ajzwlUTJzxpSyABUcXJ3faH+LSKg6Pktbqs+jcBEdvM4XMFKyywtUoAAA==",
+      "width": 3910,
+      "height": 4887,
+      "exif": {
+        "focalLength": "40mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 900"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251204-5091",
+      "src": "photographs/20251204-5091.jpg",
+      "thumb": "photographs/thumb/20251204-5091.webp",
+      "medium": "photographs/med/20251204-5091.webp",
+      "full": "photographs/full/20251204-5091.webp",
+      "lqip": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACQAwCdASoUAA0APzmEuVOvKKWisAgB4CcJYwC7ABbV6uj+bwgAAP5T9HCWta8n0A7n0E8D1y5UYeMJWvCRluLdc+Qx1lAQPKwQCRbhwjlcTNa4TqL8adggAAA=",
+      "width": 4833,
+      "height": 3222,
+      "exif": {
+        "focalLength": "37mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/4s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251204-5160",
+      "src": "photographs/20251204-5160.jpg",
+      "thumb": "photographs/thumb/20251204-5160.webp",
+      "medium": "photographs/med/20251204-5160.webp",
+      "full": "photographs/full/20251204-5160.webp",
+      "lqip": "data:image/webp;base64,UklGRpQAAABXRUJQVlA4IIgAAADQBACdASoUABQAPzmOvlevKaYjqAqp4CcJZAC7AArIscg1UWu2Ept0ImyF4mPYwAD50igMjEJfHxcckjnO9k7bikH9P2KSjwj7L54Sv6JPMJQrf9JQU8NIWgOCkRWeMcjbUAyFOBzG+EIZJvOdMMHr0l7ks/qCCfkDe1bbQWIcNEZU4W8IAAAA",
+      "width": 3787,
+      "height": 3787,
+      "exif": {
+        "focalLength": "25mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "8s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251206-5801",
+      "src": "photographs/20251206-5801.jpg",
+      "thumb": "photographs/thumb/20251206-5801.webp",
+      "medium": "photographs/med/20251206-5801.webp",
+      "full": "photographs/full/20251206-5801.webp",
+      "lqip": "data:image/webp;base64,UklGRrYAAABXRUJQVlA4IKoAAAAwBQCdASoUABkAPzmQu1gvKaWjqAqp4CcJaQAIEDiBcJ5WaTY5bD+tiK1N2zSY0p0lAAD9I0/5hzW4I6XKWaSnHs1+oBikau+XcwB2R879kM3fhZiRA9nZbL6CI8eRYEaabyx2Hj78MWCaDkTeqotF42Av8KF2erO66rD5ZIAuaLY+YJTUw0v0KYu5KGmzkAUJE+HcrAXjPe4+MhyKn3HzLShi4Y6FKAAAAA==",
+      "width": 3452,
+      "height": 4315,
+      "exif": {
+        "focalLength": "40mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/1000s",
+        "iso": "ISO 4000"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251206-6049",
+      "src": "photographs/20251206-6049.jpg",
+      "thumb": "photographs/thumb/20251206-6049.webp",
+      "medium": "photographs/med/20251206-6049.webp",
+      "full": "photographs/full/20251206-6049.webp",
+      "lqip": "data:image/webp;base64,UklGRooAAABXRUJQVlA4IH4AAACwBACdASoUABQAPzmWwlmvKqcjqAgB4CcJYwC7AA0aq6e1PX+SpfHszb937yhoAP6CyNTEtd65rIgOk5w2j/H03ghJS/QlsFfhkiiVtVcem3zgT3RuQ5OvE8mxa2WwpuMTh7wt3uCMGkKFZfFsrTzlVyMYx1D9IMjgUwCX5AA=",
+      "width": 2361,
+      "height": 2361,
+      "exif": {
+        "focalLength": "26mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 1400"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251211-8417",
+      "src": "photographs/20251211-8417.jpg",
+      "thumb": "photographs/thumb/20251211-8417.webp",
+      "medium": "photographs/med/20251211-8417.webp",
+      "full": "photographs/full/20251211-8417.webp",
+      "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAwCdASoUAA0APzmIuVQvKSWjMAgB4CcJZwAAW616/HluYExIAAD+cxqSBY58uakWcyu7U6DLh4r9CIhY3m8gb1mZRsDieU/NYXTRfMLwlAMBb7QgAA==",
+      "width": 6048,
+      "height": 4032,
+      "exif": {
+        "focalLength": "20mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 160"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20251214-2288",
+      "src": "photographs/20251214-2288.jpg",
+      "thumb": "photographs/thumb/20251214-2288.webp",
+      "medium": "photographs/med/20251214-2288.webp",
+      "full": "photographs/full/20251214-2288.webp",
+      "lqip": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADwAwCdASoUABQAPzmCvVcvJ6YjsBgIAeAnCWllbgAbifp8e702IaAAAP7sXEp0kB0RNsHUTl07+b5YVCsBvQo9INXDGhCndHHCv0YhnqgAAA==",
+      "width": 2996,
+      "height": 2996,
+      "exif": {
+        "focalLength": "37mm",
+        "aperture": "ƒ/4.5",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 140"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260116-6927",
+      "src": "photographs/20260116-6927.jpg",
+      "thumb": "photographs/thumb/20260116-6927.webp",
+      "medium": "photographs/med/20260116-6927.webp",
+      "full": "photographs/full/20260116-6927.webp",
+      "lqip": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAACwAwCdASoUAA0APzmEuVOvKKWisAgB4CcJYwAAKbUmlHCNAETAAAD+Ga7CdkdkXpT/J7qpuzfMfPNUUNmlZm24VEn9lCmkehZ+H9C112bkbohoQNyHQpYQVKNLywPCbceWbvAA",
+      "width": 5831,
+      "height": 3887,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/5",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 180"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260116-7132",
+      "src": "photographs/20260116-7132.jpg",
+      "thumb": "photographs/thumb/20260116-7132.webp",
+      "medium": "photographs/med/20260116-7132.webp",
+      "full": "photographs/full/20260116-7132.webp",
+      "lqip": "data:image/webp;base64,UklGRpIAAABXRUJQVlA4IIYAAADQBACdASoUAA0APzmEuVOvKKWisAgB4CcJbACdIBm6gKoAXGsTk3A2RZbUDg3LgADJm/KsXo69V16RAVTu2lwk981ftBTYwZwuZwz5OjeOH/w0t+qIpziQKT1RgWB89m/3BNCHYY1nbH4ZRoj3u1zdH+nNvGHNMlC9vkVp3ExCSykrUJIAAA==",
+      "width": 2371,
+      "height": 1581,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 900"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260117-9322",
+      "src": "photographs/20260117-9322.jpg",
+      "thumb": "photographs/thumb/20260117-9322.webp",
+      "medium": "photographs/med/20260117-9322.webp",
+      "full": "photographs/full/20260117-9322.webp",
+      "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAwCdASoUAA8APzmGuVOvKSWisAgB4CcJYwDKACHHmx30wJWIMYEAAP7oz3ri2Kw0ONGq/JgMaQECxbESXIr/k14NSpD8juSJHM3nIWBA7KzplGude2QFmeJxbrfoVOnYANfAAAA=",
+      "width": 4513,
+      "height": 3385,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/125s",
+        "iso": "ISO 2500"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260118-0018",
+      "src": "photographs/20260118-0018.jpg",
+      "thumb": "photographs/thumb/20260118-0018.webp",
+      "medium": "photographs/med/20260118-0018.webp",
+      "full": "photographs/full/20260118-0018.webp",
+      "lqip": "data:image/webp;base64,UklGRoYAAABXRUJQVlA4IHoAAACQAwCdASoUAA8APzmGuVOvKSWisAgB4CcJZAC7ACLHNlZ6+Dd8AP3wCPyyh+DyJEU6HZtZFeHOJmahffHmQDkuoNR2gmKQ1P+z4usocOARO+sYxz4klTBWmzby7T0kdRDeCRsWywLErUHBl3sh4ZWf+ma1B4oGCUgAAA==",
+      "width": 5242,
+      "height": 3931,
+      "exif": {
+        "focalLength": "50mm",
+        "aperture": "ƒ/2",
+        "shutterSpeed": "1/30s",
+        "iso": "ISO 1000"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260118-9600",
+      "src": "photographs/20260118-9600.jpg",
+      "thumb": "photographs/thumb/20260118-9600.webp",
+      "medium": "photographs/med/20260118-9600.webp",
+      "full": "photographs/full/20260118-9600.webp",
+      "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAADQBACdASoUABkAPzmQvFgvKaWjqAqp4CcJagCdM2QBoS9UVyNzPljOVMzoj/JDAAD42EXPGhkjCuC2cADNLLOITmYS9fTwG4z6mct1ZctGgrrljQvSzmyo5NounaGE4J+UkbbY38eCVcCrbgCKmKL+0Oe0Q3v2UOEpGgQAyP8fTDvvcr6QhcXG8R3zxFlVkZTdfXI5E7DYAAAA",
+      "width": 3874,
+      "height": 4842,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/4",
+        "shutterSpeed": "1/15s",
+        "iso": "ISO 1600"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260118-9757",
+      "src": "photographs/20260118-9757.jpg",
+      "thumb": "photographs/thumb/20260118-9757.webp",
+      "medium": "photographs/med/20260118-9757.webp",
+      "full": "photographs/full/20260118-9757.webp",
+      "lqip": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAABwAwCdASoUAA8APzmEuVOvKKWisAgB4CcJQigJYAACUggkyiAA/ux69XvaugX+c/757rlRJE3Dl/7eK5WJgh6u7AhCsNk08hdUXg8bwr0rOOrtvJrq0h5Q0b8CEWhoJKyizEBRATQMAAAA",
+      "width": 3659,
+      "height": 2744,
+      "exif": {
+        "focalLength": "26mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/15s",
+        "iso": "ISO 1000"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260118-9805",
+      "src": "photographs/20260118-9805.jpg",
+      "thumb": "photographs/thumb/20260118-9805.webp",
+      "medium": "photographs/med/20260118-9805.webp",
+      "full": "photographs/full/20260118-9805.webp",
+      "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAwCdASoUAA8APzmEuVOvKKWisAgB4CcJZQDCgBjo4TOgmhkPU0AA/rlIFUX/u1+Ti2tW37/8UHf2foVbntOFBqSm9HE3rrlExzIqFlIhn70FflAAAA==",
+      "width": 4032,
+      "height": 3024,
+      "exif": {
+        "focalLength": "26mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/15s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260118-9890",
+      "src": "photographs/20260118-9890.jpg",
+      "thumb": "photographs/thumb/20260118-9890.webp",
+      "medium": "photographs/med/20260118-9890.webp",
+      "full": "photographs/full/20260118-9890.webp",
+      "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAACQAwCdASoUAA8APzmEuVOvKKWisAgB4CcJQBWAA0HZYKWGvL0AAPvsPCgiaFxY1mrdLoTbmipVJpyx7OGJ9vOqmbvMYwL4aEDpSUQDLGYd9qwp/F//dJ7vnIN9Jfzj+tlZisFwAAA=",
+      "width": 3954,
+      "height": 2965,
+      "exif": {
+        "focalLength": "26mm",
+        "aperture": "ƒ/3.2",
+        "shutterSpeed": "1/30s",
+        "iso": "ISO 1250"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260119-0330",
+      "src": "photographs/20260119-0330.jpg",
+      "thumb": "photographs/thumb/20260119-0330.webp",
+      "medium": "photographs/med/20260119-0330.webp",
+      "full": "photographs/full/20260119-0330.webp",
+      "lqip": "data:image/webp;base64,UklGRqIAAABXRUJQVlA4IJYAAACwBACdASoUABQAPzmOuVavKaUjqA1R4CcJZADCgBDOfIOiF0gJib2otj3yGxtAAP3NJpiGZdyDbh+/AabBLzTuZv7yEL5obfKQMqfSgWAMd+w9jtcx17bap8whSIxxExhclgYINNUJns31VymAIFhQP1whPG0xd2pVy1Z884UMsHuCSKLcqvrnP5mmVPb3z5GdnUJt4AA=",
+      "width": 2185,
+      "height": 2185,
+      "exif": {
+        "focalLength": "97mm",
+        "aperture": "ƒ/5.6",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260121-0952",
+      "src": "photographs/20260121-0952.jpg",
+      "thumb": "photographs/thumb/20260121-0952.webp",
+      "medium": "photographs/med/20260121-0952.webp",
+      "full": "photographs/full/20260121-0952.webp",
+      "lqip": "data:image/webp;base64,UklGRoQAAABXRUJQVlA4IHgAAACwAwCdASoUAA8APzmEuVOvKKWisAgB4CcJQAAIcALnfkHce6VFqAD+iBHeDidyqWNtXGDxzGLzXTFf/NPzd5jKegQCe8F6JbTyuFqTp8BDpsG/vHENGHP1LXGTHbFbqUNSLY9HRzkjFo3waU4+ObNoMCmfX3qVwAA=",
+      "width": 5376,
+      "height": 4032,
+      "exif": {
+        "focalLength": "40mm",
+        "aperture": "ƒ/4",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 220"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260126-3485",
+      "src": "photographs/20260126-3485.jpg",
+      "thumb": "photographs/thumb/20260126-3485.webp",
+      "medium": "photographs/med/20260126-3485.webp",
+      "full": "photographs/full/20260126-3485.webp",
+      "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAADwBACdASoUABQAPzmSwFmvKaajqAgB4CcJZQCw7ywAsBuunKYH7jKityDgH2ea5mAA4nU/o1yoVzg2aQpsA5CFZAnFJBz94Q7lds2lRrJ7GfitK4aLsN+wW8M9vNNkpFN/FMvr24ZmPqeCpcAT/tK4WRr66oF8N60vBQeWUcYG7dpxUVFWn95anYgJUAAA",
+      "width": 3742,
+      "height": 3742,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/1000s",
+        "iso": "ISO 2500"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260221-7713",
+      "src": "photographs/20260221-7713.jpg",
+      "thumb": "photographs/thumb/20260221-7713.webp",
+      "medium": "photographs/med/20260221-7713.webp",
+      "full": "photographs/full/20260221-7713.webp",
+      "lqip": "data:image/webp;base64,UklGRpoAAABXRUJQVlA4II4AAABwBACdASoUAA8APzmGuVOvKSWisAgB4CcJbAC/WIkDgCe5IhFhPJKKRUaUAAD+fn8rzuAVb6yBEAIR1kxAMu6/d1Hv51XFBBWrCYP4p1/yKhgLGQYdJYfgJlSxq5owfFZ3AhWbVRe4jWXMrh5CxT94VBqnrBRIr/D3A71lbPBV8G1QCXw8BgBG4ymKKEAA",
+      "width": 4508,
+      "height": 3381,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/2.8",
+        "shutterSpeed": "1/2000s",
+        "iso": "ISO 20000"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260223-0511",
+      "src": "photographs/20260223-0511.jpg",
+      "thumb": "photographs/thumb/20260223-0511.webp",
+      "medium": "photographs/med/20260223-0511.webp",
+      "full": "photographs/full/20260223-0511.webp",
+      "lqip": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwAwCdASoUAA0APzmGulOvKKWisAgB4CcJZQDA3Bad2YTdVpZTzIAAAPzXo1kOEKx9vXBNJb5KnpbfAIRjlnlnl+WK+1I0Nxmhn5xiO3rEHWWBs3tCguV5BnqG2p9MngBvrXtbeCBV2wAA",
+      "width": 6048,
+      "height": 4032,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/500s",
+        "iso": "ISO 450"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260223-0776",
+      "src": "photographs/20260223-0776.jpg",
+      "thumb": "photographs/thumb/20260223-0776.webp",
+      "medium": "photographs/med/20260223-0776.webp",
+      "full": "photographs/full/20260223-0776.webp",
+      "lqip": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAABQBACdASoUABQAPzmAvVOvJ6aisBgMAeAnCWcAACmxDIwUpMe/G1fjwsMAAP7nQTlsB3TFQaUu/YeBg3bQWivqAMZPn3qoMPBdKMYJfbyaU503aGmlCAAA",
+      "width": 3294,
+      "height": 3294,
+      "exif": {
+        "focalLength": "35mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/1000s",
+        "iso": "ISO 500"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260315-8106",
+      "src": "photographs/20260315-8106.jpg",
+      "thumb": "photographs/thumb/20260315-8106.webp",
+      "medium": "photographs/med/20260315-8106.webp",
+      "full": "photographs/full/20260315-8106.webp",
+      "lqip": "data:image/webp;base64,UklGRqYAAABXRUJQVlA4IJoAAABQBQCdASoUAB4APzmIvFSvKSYjKA1R4CcJYwAu/8D5ItTLU+liWNx5Wa6d5ig+uQCeXQAA/uJ/+qeLFC23S0dQIWQ4Ww3seBjrQZ1M6oFduYwOAOn3e9JuChenzkNoAQ/jv379bRqjNaX0/vvnjvcRMQKIqGcFf93E9GlDs/jsITbnX9FFX/YkI319pTweCcI8Ie1UtGP52gAA",
+      "width": 3131,
+      "height": 4696,
+      "exif": {
+        "focalLength": "24mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 180"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260320-8169",
+      "src": "photographs/20260320-8169.jpg",
+      "thumb": "photographs/thumb/20260320-8169.webp",
+      "medium": "photographs/med/20260320-8169.webp",
+      "full": "photographs/full/20260320-8169.webp",
+      "lqip": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABwAwCdASoUAA0APzmGuVOvKSWisAgB4CcJZwAAKYCml3r+zgAA/tt/2CczRciinbUHP7wgLLWPhjclW1hABkV/JDayted5iP3sMgcwDzdIWc+DQ4H0FxU8grAyfx5OA6a2GXUCKkZBiWjbPJuioAAA",
+      "width": 5604,
+      "height": 3736,
+      "exif": {
+        "focalLength": "68mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/250s",
+        "iso": "ISO 100"
+      },
+      "title": "",
+      "description": ""
+    },
+    {
+      "id": "20260321-8791",
+      "src": "photographs/20260321-8791.jpg",
+      "thumb": "photographs/thumb/20260321-8791.webp",
+      "medium": "photographs/med/20260321-8791.webp",
+      "full": "photographs/full/20260321-8791.webp",
+      "lqip": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAwCdASoUAA8APzmEuVOvKKWisAgB4CcJZgC7ABeq+IDog4GqNJAA/uWmH0WoO5PVMfnszS/VYQcYZsw5d24aTAoVS4lbgBxvnx6Uhw8ThQDYUAWYAA==",
+      "width": 5016,
+      "height": 3762,
+      "exif": {
+        "focalLength": "39mm",
+        "aperture": "ƒ/8",
+        "shutterSpeed": "1/1000s",
+        "iso": "ISO 280"
+      },
+      "title": "",
+      "description": ""
+    }
+  ]
+}
