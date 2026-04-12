@@ -11,7 +11,7 @@ function patchGetContext(hasTexElementImage2D: boolean) {
     ? { texElementImage2D: vi.fn() }
     : {};
   const original = HTMLCanvasElement.prototype.getContext;
-  HTMLCanvasElement.prototype.getContext = function (contextId: string, ...args: any[]) {
+  HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, contextId: string, ...args: any[]) {
     if (contextId === 'webgl2') return fakeGL as any;
     return (original as any).call(this, contextId, ...args);
   } as any;

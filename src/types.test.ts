@@ -37,7 +37,7 @@ describe('MODE_LABELS', () => {
   });
 
   it('all label values are non-empty strings', () => {
-    for (const [mode, label] of Object.entries(MODE_LABELS)) {
+    for (const [_mode, label] of Object.entries(MODE_LABELS)) {
       expect(typeof label).toBe('string');
       expect(label.length).toBeGreaterThan(0);
     }

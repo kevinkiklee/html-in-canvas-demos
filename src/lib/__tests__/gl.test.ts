@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { compileShader, createProgram, getCachedProgram } from '../gl';
 
 // ---------------------------------------------------------------------------
@@ -144,7 +144,6 @@ describe('createProgram', () => {
 
   it('throws when link fails and deletes the program', () => {
     const base = makeBaseGL();
-    let callCount = 0;
     const gl = {
       ...base,
       // First two calls (for shader COMPILE_STATUS) return true; third (LINK_STATUS) false
