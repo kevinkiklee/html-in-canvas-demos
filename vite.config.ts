@@ -15,4 +15,11 @@ export default defineConfig({
     },
   },
   assetsInclude: ['**/*.glsl'],
+  test: {
+    environment: 'happy-dom',
+    root: resolve(__dirname, '.'),
+    resolve: {
+      alias: { '@': resolve(__dirname, 'src') },
+    },
+  },
 });
