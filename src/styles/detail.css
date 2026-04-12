@@ -34,6 +34,7 @@
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 400ms var(--ease-out-quint), transform 400ms var(--ease-out-quint);
+  outline: none; /* Programmatic focus — no visible ring needed */
 }
 
 .detail-visible .detail-content {

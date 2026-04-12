@@ -102,6 +102,7 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
 
   const resetBtn = document.createElement('button');
   resetBtn.textContent = 'Reset Stack';
+  resetBtn.setAttribute('aria-label', 'Reset print stack to first photo');
   resetBtn.style.cssText = `
     position: absolute; bottom: 1.5rem; left: 1.5rem;
     font-family: Inter, system-ui, sans-serif; font-size: 0.8rem;
@@ -109,22 +110,25 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
     padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer;
     transition: color 150ms, border-color 150ms;
   `;
-  resetBtn.addEventListener('click', () => {
+  const onResetClick = () => {
     currentIndex = 0;
     showPrint(0);
     counter.textContent = `1 / ${photos.length}`;
     liftAmount = 0;
     tossing = false;
     setAnimating(false);
-  });
-  resetBtn.addEventListener('mouseenter', () => {
+  };
+  const onResetEnter = () => {
     resetBtn.style.color = '#8a8680';
     resetBtn.style.borderColor = 'rgba(255,255,255,0.12)';
-  });
-  resetBtn.addEventListener('mouseleave', () => {
+  };
+  const onResetLeave = () => {
     resetBtn.style.color = '#5a5650';
     resetBtn.style.borderColor = 'rgba(255,255,255,0.06)';
-  });
+  };
+  resetBtn.addEventListener('click', onResetClick);
+  resetBtn.addEventListener('mouseenter', onResetEnter);
+  resetBtn.addEventListener('mouseleave', onResetLeave);
   canvas.parentElement?.appendChild(resetBtn);
 
   function toss(): void {
@@ -198,7 +202,14 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
     onResize() { requestDraw(); },
 
     destroy() {
+      // Stop any in-progress toss animation
+      tossing = false;
+      setAnimating(false);
+
       canvas.removeEventListener('paint', onPaint);
+      resetBtn.removeEventListener('click', onResetClick);
+      resetBtn.removeEventListener('mouseenter', onResetEnter);
+      resetBtn.removeEventListener('mouseleave', onResetLeave);
       gl.deleteTexture(texFront);
       mesh.dispose();
       frontEl.remove();

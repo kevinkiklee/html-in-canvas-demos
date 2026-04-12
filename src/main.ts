@@ -39,11 +39,20 @@ if (support !== 'supported') {
 
 // --- App initialization ---
 const photos = getShuffledPhotos();
+if (photos.length === 0) {
+  document.getElementById('app')!.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;height:100vh;padding:2rem;text-align:center;">
+      <p style="color:var(--color-text-secondary);">No photographs found. Run <code>npm run manifest</code> to generate the photo manifest.</p>
+    </div>
+  `;
+  throw new Error('Photo manifest is empty');
+}
 const container = document.getElementById('canvas-container')!;
 const shell = new Shell(container);
 
 let currentMode: ModeImpl | null = null;
 let currentModeName: ModeName = 'album';
+let switching = false;
 
 // Modes are dynamically imported so each mode's shader GLSL, HTML templates,
 // and logic are code-split into separate chunks. The user only downloads the
@@ -65,6 +74,8 @@ function openDetail(photoIndex: number): void {
 
 async function switchMode(name: ModeName): Promise<void> {
   if (name === currentModeName && currentMode) return;
+  if (switching) return; // Prevent concurrent mode switches
+  switching = true;
 
   const doSwitch = async () => {
     if (currentMode) {
@@ -104,10 +115,14 @@ async function switchMode(name: ModeName): Promise<void> {
   // content. Falls back to an instant switch on browsers without the API.
   // The transition animates the canvas surface itself, so the outgoing mode's
   // last frame fades into the incoming mode's first frame.
-  if (document.startViewTransition) {
-    document.startViewTransition(doSwitch);
-  } else {
-    await doSwitch();
+  try {
+    if (document.startViewTransition) {
+      document.startViewTransition(doSwitch);
+    } else {
+      await doSwitch();
+    }
+  } finally {
+    switching = false;
   }
 }
 

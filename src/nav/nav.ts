@@ -42,12 +42,26 @@ export function createNav(opts: NavOptions): Nav {
   const exifBtn = document.createElement('button');
   exifBtn.className = 'nav-ctrl-btn';
   exifBtn.textContent = 'EXIF';
-  exifBtn.addEventListener('click', opts.onToggleExif);
+  // Initial state matches persisted preference (EXIF visible by default)
+  const exifInitiallyHidden = localStorage.getItem('exif-hidden') === '1';
+  exifBtn.setAttribute('aria-pressed', String(!exifInitiallyHidden));
+  exifBtn.addEventListener('click', () => {
+    opts.onToggleExif();
+    const hidden = document.body.classList.contains('exif-hidden');
+    exifBtn.setAttribute('aria-pressed', String(!hidden));
+  });
 
   const learnBtn = document.createElement('button');
   learnBtn.className = 'nav-ctrl-btn';
   learnBtn.textContent = 'Learn';
-  learnBtn.addEventListener('click', opts.onToggleLearn);
+  const learnInitiallyOpen = localStorage.getItem('learn-drawer') !== 'closed';
+  learnBtn.setAttribute('aria-expanded', String(learnInitiallyOpen));
+  learnBtn.addEventListener('click', () => {
+    opts.onToggleLearn();
+    const drawer = document.getElementById('learn-drawer');
+    const isOpen = drawer?.classList.contains('drawer-open') ?? false;
+    learnBtn.setAttribute('aria-expanded', String(isOpen));
+  });
 
   const aboutBtn = document.createElement('button');
   aboutBtn.className = 'nav-ctrl-btn';

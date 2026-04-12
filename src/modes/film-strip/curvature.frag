@@ -14,7 +14,6 @@ out vec4 frag_color;
 uniform sampler2D u_tex;          // composite filmstrip HTML texture
 uniform vec2 u_resolution;
 uniform float u_curvature;        // bend amount (0 = flat, 0.12 = subtle curve)
-uniform float u_scrollOffset;     // normalized horizontal scroll position
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

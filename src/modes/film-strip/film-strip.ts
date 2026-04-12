@@ -135,12 +135,11 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
 
   canvas.requestPaint?.();
 
-  let scrollOffset = 0;
-  root.addEventListener('scroll', () => {
-    scrollOffset = root.scrollLeft / (root.scrollWidth - root.clientWidth);
+  const onScroll = () => {
     canvas.requestPaint?.();
     requestDraw();
-  });
+  };
+  root.addEventListener('scroll', onScroll);
 
   const mode: ModeImpl = {
     paint(_dt: number) {
@@ -154,9 +153,7 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
       gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
       gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
       // u_curvature: how much the film bends (higher = more dramatic curve)
-      // u_scrollOffset: normalized scroll position for parallax-like effects
       gl.uniform1f(uniform(gl, program, 'u_curvature'), 0.12);
-      gl.uniform1f(uniform(gl, program, 'u_scrollOffset'), scrollOffset);
       gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);
       quad.draw();
     },
@@ -179,6 +176,7 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
 
     destroy() {
       canvas.removeEventListener('paint', onPaint);
+      root.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();
       root.remove();

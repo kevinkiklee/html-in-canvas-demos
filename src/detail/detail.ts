@@ -9,13 +9,18 @@ interface DetailView {
 
 export function createDetailView(): DetailView {
   const el = document.getElementById('detail-view')!;
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-label', 'Photo detail view');
+
   let photos: Photo[] = [];
   let currentIndex = 0;
   let isVisible = false;
+  let previousFocus: HTMLElement | null = null;
 
   el.innerHTML = `
     <div class="detail-backdrop"></div>
-    <div class="detail-content">
+    <div class="detail-content" tabindex="-1">
       <img class="detail-img" />
       <div class="detail-info">
         <h3 class="detail-title"></h3>
@@ -60,6 +65,8 @@ export function createDetailView(): DetailView {
     isVisible = false;
     el.classList.remove('detail-visible');
     el.classList.add('detail-hidden');
+    previousFocus?.focus();
+    previousFocus = null;
   }
 
   backdrop.addEventListener('click', close);
@@ -79,11 +86,14 @@ export function createDetailView(): DetailView {
 
   return {
     open(p: Photo[], index: number) {
+      previousFocus = document.activeElement as HTMLElement | null;
       photos = p;
       show(index);
       isVisible = true;
       el.classList.remove('detail-hidden');
       el.classList.add('detail-visible');
+      // Move focus into the detail view so keyboard users can navigate
+      (el.querySelector('.detail-content') as HTMLElement)?.focus();
     },
     close,
     isOpen: () => isVisible,

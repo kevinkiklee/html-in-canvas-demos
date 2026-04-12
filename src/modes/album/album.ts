@@ -223,6 +223,10 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
     onResize() { requestDraw(); },
 
     destroy() {
+      // Stop any in-progress page turn
+      turning = false;
+      setAnimating(false);
+
       canvas.removeEventListener('paint', onPaint);
       canvas.style.cursor = '';
       gl.deleteTexture(texCurrent);

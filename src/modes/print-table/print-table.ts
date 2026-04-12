@@ -94,10 +94,11 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
 
   canvas.requestPaint?.();
 
-  root.addEventListener('scroll', () => {
+  const onScroll = () => {
     canvas.requestPaint?.();
     requestDraw();
-  });
+  };
+  root.addEventListener('scroll', onScroll);
 
   const mode: ModeImpl = {
     paint(_dt: number) {
@@ -136,6 +137,7 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
 
     destroy() {
       canvas.removeEventListener('paint', onPaint);
+      root.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();
       root.remove();

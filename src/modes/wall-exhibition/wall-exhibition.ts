@@ -128,12 +128,11 @@ export default function createWallExhibition(ctx: ModeContext): ModeImpl {
 
   canvas.requestPaint?.();
 
-  let scrollY = 0;
-  root.addEventListener('scroll', () => {
-    scrollY = root.scrollTop / Math.max(1, root.scrollHeight - root.clientHeight);
+  const onScroll = () => {
     canvas.requestPaint?.();
     requestDraw();
-  });
+  };
+  root.addEventListener('scroll', onScroll);
 
   const mode: ModeImpl = {
     paint(_dt: number) {
@@ -146,8 +145,6 @@ export default function createWallExhibition(ctx: ModeContext): ModeImpl {
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
       gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
-      // u_scrollY: normalized scroll position — shifts which overhead lights are active
-      gl.uniform1f(uniform(gl, program, 'u_scrollY'), scrollY);
       gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);
       quad.draw();
     },
@@ -163,6 +160,7 @@ export default function createWallExhibition(ctx: ModeContext): ModeImpl {
 
     destroy() {
       canvas.removeEventListener('paint', onPaint);
+      root.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();
       root.remove();

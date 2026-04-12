@@ -180,6 +180,10 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
     onResize() { requestDraw(); },
 
     destroy() {
+      // Stop any in-progress transition
+      transitioning = false;
+      setAnimating(false);
+
       canvas.removeEventListener('paint', onPaint);
       canvas.style.cursor = '';
       gl.deleteTexture(texA);

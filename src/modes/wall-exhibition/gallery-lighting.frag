@@ -13,7 +13,6 @@ out vec4 frag_color;
 
 uniform sampler2D u_tex;      // composite HTML texture (photos + plaques)
 uniform vec2 u_resolution;
-uniform float u_scrollY;      // normalized scroll position
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

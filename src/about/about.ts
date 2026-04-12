@@ -6,6 +6,10 @@ interface AboutPanel {
 export function createAboutPanel(): AboutPanel {
   const el = document.getElementById('about-panel')!;
 
+  el.setAttribute('role', 'dialog');
+  el.setAttribute('aria-modal', 'true');
+  el.setAttribute('aria-label', 'About this portfolio');
+
   el.innerHTML = `
     <div class="about-backdrop"></div>
     <div class="about-card">
@@ -28,20 +32,31 @@ export function createAboutPanel(): AboutPanel {
   `;
 
   const backdrop = el.querySelector('.about-backdrop')!;
-  const closeBtn = el.querySelector('.about-close')!;
+  const closeBtn = el.querySelector('.about-close') as HTMLElement;
+
+  let previousFocus: HTMLElement | null = null;
 
   function close() {
     el.classList.remove('panel-visible');
     el.classList.add('panel-hidden');
+    previousFocus?.focus();
+    previousFocus = null;
   }
 
   backdrop.addEventListener('click', close);
   closeBtn.addEventListener('click', close);
 
+  document.addEventListener('keydown', (e) => {
+    if (!el.classList.contains('panel-visible')) return;
+    if (e.key === 'Escape') close();
+  });
+
   return {
     open() {
+      previousFocus = document.activeElement as HTMLElement | null;
       el.classList.remove('panel-hidden');
       el.classList.add('panel-visible');
+      closeBtn.focus();
     },
     close,
   };
