@@ -1,3 +1,19 @@
+/**
+ * WebGL2 utilities for the HTML-in-Canvas portfolio.
+ *
+ * Key patterns:
+ * - Fullscreen quad: a single triangle strip covering clip space [-1,1].
+ *   Used for post-processing — the fragment shader runs once per pixel on
+ *   the HTML texture. This is how modes apply spotlight, tilt-shift, etc.
+ * - Tessellated quad: subdivided into segX*segY triangles so the vertex
+ *   shader can displace individual vertices (page curl, paper warp).
+ *   Without tessellation, vertex displacement only bends 4 corners.
+ * - sRGB linearization: HTML textures are in sRGB gamma space. All shader
+ *   math (blending, lighting, blur) must happen in linear space, then
+ *   convert back to sRGB before output. Skipping this produces washed-out
+ *   highlights and crushed shadows.
+ */
+
 export function initGL(canvas: HTMLCanvasElement): WebGL2RenderingContext {
   const gl = canvas.getContext('webgl2', {
     alpha: false,
@@ -58,10 +74,14 @@ export interface QuadVAO {
   dispose: () => void;
 }
 
+// Fullscreen quad: 4 vertices drawn as a triangle strip. The fragment shader
+// runs for every pixel, sampling from the HTML texture. This is the workhorse
+// for post-processing effects (spotlight, tilt-shift, gallery lighting, etc.).
 export function createQuadVAO(gl: WebGL2RenderingContext): QuadVAO {
   const vao = gl.createVertexArray()!;
   gl.bindVertexArray(vao);
 
+  // Each vertex: (clip x, clip y, tex u, tex v)
   const vertices = new Float32Array([
     -1, -1,    0, 0,
      1, -1,    1, 0,
@@ -94,6 +114,10 @@ export function createQuadVAO(gl: WebGL2RenderingContext): QuadVAO {
   };
 }
 
+// Tessellated quad: subdivided into segX*segY cells (each 2 triangles). The
+// extra vertices let the vertex shader apply non-linear displacement — page
+// curls, paper warps, film curvature. A simple 4-vertex quad can only do
+// affine transforms; tessellation is required for bending live HTML content.
 export function createTessellatedQuad(
   gl: WebGL2RenderingContext,
   segX: number,
@@ -172,6 +196,9 @@ export function uniform(
   return gl.getUniformLocation(program, name);
 }
 
+// Creates a texture sized 1x1 with a near-black placeholder. The real pixels
+// arrive later via texElementImage2D inside the paint handler. CLAMP_TO_EDGE
+// is required because HTML textures are not power-of-two sized.
 export function createElementTexture(gl: WebGL2RenderingContext): WebGLTexture {
   const texture = gl.createTexture()!;
   gl.bindTexture(gl.TEXTURE_2D, texture);

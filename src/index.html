@@ -3,27 +3,75 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Photography Portfolio</title>
-  <meta name="description" content="A photography portfolio built with HTML-in-Canvas — live HTML rendered through custom WebGL2 shaders." />
+  <title>Kevin Lee — Photography Portfolio | HTML-in-Canvas</title>
+  <meta name="description" content="Photography portfolio by Kevin Lee, rendered through custom WebGL2 shaders using the experimental HTML-in-Canvas API. Seven viewing modes — album page curls, cinematic transitions, tilt-shift miniatures, and more." />
+  <meta name="author" content="Kevin Lee" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://kevinlee.photo/" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Photography Portfolio" />
-  <meta property="og:description" content="Seven viewing modes, each enhanced by HTML-in-Canvas — an experimental web API that lets you apply custom GLSL shaders to live HTML content." />
+  <meta property="og:title" content="Kevin Lee — Photography Portfolio" />
+  <meta property="og:description" content="Seven viewing modes rendered through custom GLSL shaders on live HTML — page curls, film burns, spotlight effects, tilt-shift miniatures — powered by the experimental HTML-in-Canvas API." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://kevinlee.photo/" />
+  <meta property="og:site_name" content="Kevin Lee Photography" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://kevinlee.photo/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Photography portfolio showcasing HTML-in-Canvas shader effects" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Kevin Lee — Photography Portfolio" />
+  <meta name="twitter:description" content="Seven viewing modes with custom GLSL shaders on live HTML content, powered by the experimental HTML-in-Canvas API." />
+  <meta name="twitter:image" content="https://kevinlee.photo/og-image.jpg" />
+  <meta name="twitter:image:alt" content="Photography portfolio showcasing HTML-in-Canvas shader effects" />
 
   <!-- Preload heading font for LCP -->
   <link rel="preload" href="/fonts/playfair-display-italic.woff2" as="font" type="font/woff2" crossorigin />
 
+  <!-- Structured Data: ImageGallery -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "ImageGallery",
-    "name": "Photography Portfolio",
-    "description": "A photography portfolio showcasing HTML-in-Canvas technology",
+    "name": "Kevin Lee — Photography Portfolio",
+    "description": "A photography portfolio rendered through custom WebGL2 shaders using the experimental HTML-in-Canvas API, featuring seven distinct viewing modes.",
+    "url": "https://kevinlee.photo/",
     "author": {
       "@type": "Person",
-      "name": "Photographer"
+      "name": "Kevin Lee",
+      "url": "https://kevinlee.photo/"
+    },
+    "about": {
+      "@type": "Thing",
+      "name": "Photography"
     }
+  }
+  </script>
+
+  <!-- Structured Data: Person (photographer) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Kevin Lee",
+    "url": "https://kevinlee.photo/",
+    "jobTitle": "Photographer",
+    "sameAs": []
+  }
+  </script>
+
+  <!-- Structured Data: WebSite -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Kevin Lee Photography",
+    "url": "https://kevinlee.photo/",
+    "description": "Photography portfolio built with HTML-in-Canvas and custom WebGL2 shaders"
   }
   </script>
 
@@ -31,9 +79,9 @@
 </head>
 <body>
   <div id="app">
-    <nav id="main-nav"></nav>
+    <nav id="main-nav" aria-label="Mode navigation"></nav>
     <main id="canvas-container"></main>
-    <aside id="learn-drawer" class="drawer-closed"></aside>
+    <aside id="learn-drawer" class="drawer-closed" aria-label="Learn about HTML-in-Canvas"></aside>
     <div id="about-panel" class="panel-hidden"></div>
     <div id="detail-view" class="detail-hidden"></div>
   </div>
@@ -41,11 +89,53 @@
   <noscript>
     <style>
       #app { display: none; }
-      .noscript-fallback { padding: 2rem; color: #e8e4df; background: #0a0a0b; font-family: system-ui; }
+      .noscript-fallback {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 3rem 2rem;
+        color: #e8e4df;
+        background: #0a0a0b;
+        font-family: system-ui, -apple-system, sans-serif;
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+      .noscript-fallback h1 {
+        font-family: 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+      .noscript-fallback p { color: #8a8680; margin-bottom: 1rem; }
+      .noscript-fallback code {
+        display: block;
+        margin: 1rem 0;
+        padding: 0.75rem 1rem;
+        background: #141416;
+        border-radius: 6px;
+        font-family: 'JetBrains Mono', monospace;
+        color: #e8e4df;
+        font-size: 0.9rem;
+      }
+      .noscript-fallback ul { list-style: none; padding: 0; color: #8a8680; }
+      .noscript-fallback li { padding: 0.25rem 0; }
+      .noscript-fallback li::before { content: "\2022 "; color: #5a5650; }
     </style>
     <div class="noscript-fallback">
-      <h1>Photography Portfolio</h1>
-      <p>This portfolio requires JavaScript and Chrome Canary with the HTML-in-Canvas flag enabled.</p>
+      <h1>Kevin Lee — Photography Portfolio</h1>
+      <p>
+        This portfolio uses <strong style="color:#e8e4df;">HTML-in-Canvas</strong>, an experimental web API
+        that renders live HTML content through custom WebGL2 shaders. It requires JavaScript and a
+        supported browser.
+      </p>
+      <p><strong style="color:#e8e4df;">To view this portfolio:</strong></p>
+      <ul>
+        <li>Download <a href="https://www.google.com/chrome/canary/" style="color:#e8e4df;">Chrome Canary</a></li>
+        <li>Navigate to the following URL in Chrome Canary and enable the flag:</li>
+      </ul>
+      <code>chrome://flags/#canvas-draw-element</code>
+      <p>Then reload this page. The portfolio features seven viewing modes including page-curl albums,
+        cinematic transitions, spotlight tables, curved film strips, gallery-lit exhibitions,
+        physics-based print stacks, and tilt-shift collages.</p>
     </div>
   </noscript>
 </body>

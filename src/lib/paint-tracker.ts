@@ -1,3 +1,12 @@
+/**
+ * PaintTracker — manages one WebGL texture per tracked canvas child.
+ *
+ * The core HiC constraint: texElementImage2D (the call that captures a DOM
+ * element's pixels into a WebGL texture) MUST be called inside the canvas's
+ * `paint` event handler. Calling it anywhere else — RAF, click, setTimeout —
+ * crashes the GPU process with no recovery. This class encapsulates that
+ * upload-on-paint pattern so modes don't need to manage it manually.
+ */
 import { createElementTexture } from './gl';
 
 interface TrackedElement {
@@ -31,12 +40,19 @@ export class PaintTracker {
   }
 
   uploadDirect(el: HTMLElement): boolean {
+    // Zero-size elements produce a 0x0 texture upload that crashes some GPU drivers.
     if (el.offsetWidth <= 0 || el.offsetHeight <= 0) return false;
 
     for (const entry of this.entries.values()) {
       if (entry.element === el) {
         this.gl.bindTexture(this.gl.TEXTURE_2D, entry.texture);
+        // UNPACK_FLIP_Y_WEBGL: HTML's coordinate origin is top-left, but GL's
+        // texture origin is bottom-left. Without this flip, every shader would
+        // see the HTML content upside-down.
         this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+        // texElementImage2D: the HiC call that captures a DOM element's rendered
+        // pixels directly into a WebGL texture. This MUST only be called inside
+        // the `paint` event handler — calling it elsewhere crashes the GPU process.
         (this.gl as any).texElementImage2D(
           this.gl.TEXTURE_2D, 0, this.gl.RGBA,
           this.gl.RGBA, this.gl.UNSIGNED_BYTE, el,

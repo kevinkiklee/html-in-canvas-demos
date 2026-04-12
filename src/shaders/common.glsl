@@ -1,3 +1,11 @@
+// Common GLSL utilities shared across all mode shaders.
+//
+// sRGB linearization is critical for HTML-in-Canvas: textures captured from
+// DOM elements are in sRGB gamma space. Doing math (blending, lighting, blur)
+// directly on sRGB values produces incorrect results — washed highlights,
+// crushed shadows, wrong color mixing. Always: srgbToLinear before math,
+// linearToSrgb before output.
+
 // sRGB linearization — MUST use for all shader math on HTML textures
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

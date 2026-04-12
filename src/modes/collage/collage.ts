@@ -1,3 +1,13 @@
+/**
+ * Collage mode — an editorial collage with a tilt-shift miniature effect.
+ *
+ * Demonstrates per-pixel variable blur on a composite HTML texture. The
+ * collage layout (overlapping, rotated photos with captions) is captured
+ * as one texture, and the tilt-shift shader applies a horizontal band of
+ * sharpness with progressive blur above and below. A photo spanning the
+ * focus boundary is sharp in its center and blurred at its edges — within
+ * the same element. CSS blur is uniform per-element and cannot vary within it.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createQuadVAO } from '../../lib/gl';
 import { PaintTracker } from '../../lib/paint-tracker';
@@ -131,6 +141,8 @@ export default function createCollage(ctx: ModeContext): ModeImpl {
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
       gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
+      // u_focusY: vertical center of the sharp band (0..1, 0.5 = middle)
+      // u_blurStrength: max blur radius at edges — higher = more extreme miniature effect
       gl.uniform1f(uniform(gl, program, 'u_focusY'), 0.5);
       gl.uniform1f(uniform(gl, program, 'u_blurStrength'), 18.0);
       gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);

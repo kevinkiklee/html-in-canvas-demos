@@ -1,3 +1,12 @@
+/**
+ * Print Table mode — photos on a dark surface with a cursor-following spotlight.
+ *
+ * Demonstrates composite-texture post-processing: the entire HTML grid is
+ * captured as one texture, and the spotlight shader applies per-pixel
+ * brightness falloff and distance-based blur in a single pass. The effect
+ * crosses element boundaries seamlessly — blur flows from one photo through
+ * the gap into the next caption. CSS brightness/blur are per-element only.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createQuadVAO } from '../../lib/gl';
 import { PaintTracker } from '../../lib/paint-tracker';
@@ -100,6 +109,7 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
       gl.activeTexture(gl.TEXTURE0);
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
+      // u_mousePos: normalized cursor position — the spotlight center point
       gl.uniform2f(uniform(gl, program, 'u_mousePos'), mouseX, mouseY);
       gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
       gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);

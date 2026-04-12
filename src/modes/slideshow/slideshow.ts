@@ -1,3 +1,13 @@
+/**
+ * Slideshow mode — cinematic transitions between full-screen slides.
+ *
+ * Demonstrates dual-texture blending: both outgoing and incoming slides
+ * (photo + caption as one unit) are captured as separate HiC textures.
+ * A randomly-chosen transition shader (film burn, rack focus, luminance
+ * dissolve) blends them at the pixel level. The View Transitions API can
+ * fade between snapshots but cannot do per-pixel noise dissolves, motion
+ * blur, or luminance-keyed blending — those require custom GLSL.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createQuadVAO, createElementTexture } from '../../lib/gl';
 import { loadPhoto, formatExif } from '../../lib/photos';
@@ -119,6 +129,8 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
         gl.useProgram(transitionProgram);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, fromTex);
+        // u_from/u_to: the two HTML textures the transition shader blends between.
+        // u_progress: 0..1 transition completion — drives the shader's mix logic.
         gl.uniform1i(uniform(gl, transitionProgram, 'u_from'), 0);
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, toTex);

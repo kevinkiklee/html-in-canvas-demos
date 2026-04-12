@@ -1,3 +1,13 @@
+/**
+ * Stacked Prints mode — a pile of prints you toss aside with paper warp.
+ *
+ * Demonstrates non-linear vertex displacement on live HTML. Each print's
+ * HTML (photo + caption) is captured as a texture and mapped onto a
+ * tessellated mesh. The paper-warp shader displaces vertices based on
+ * distance from the grab point, creating a sine-wave curl. CSS transforms
+ * are affine (rotate, scale, skew) and cannot bend within a single element.
+ * Non-linear deformation of live DOM content requires HiC + tessellation.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture } from '../../lib/gl';
 import { loadPhoto, formatExif } from '../../lib/photos';
@@ -62,6 +72,7 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
   canvas.addEventListener('paint', onPaint);
 
   const program = getCachedProgram(gl, vertexSrc, paperWarpSrc);
+  // 30x25 tessellation for smooth paper deformation during toss animation
   const mesh = createTessellatedQuad(gl, 30, 25);
 
   let currentIndex = 0;
@@ -136,6 +147,8 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
         gl.bindTexture(gl.TEXTURE_2D, texFront);
         gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
         gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
+        // u_grabPoint: where the user clicked — the warp radiates outward from here
+        // u_liftAmount: how far the paper is lifted — drives the sine-wave displacement
         gl.uniform2f(uniform(gl, program, 'u_grabPoint'), grabPoint.x, grabPoint.y);
         gl.uniform1f(uniform(gl, program, 'u_liftAmount'), liftAmount);
         gl.uniform1f(uniform(gl, program, 'u_isBack'), 0.0);

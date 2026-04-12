@@ -1,3 +1,13 @@
+/**
+ * Wall Exhibition mode — photos hung on a gallery wall with overhead lighting.
+ *
+ * Demonstrates shader-based compositing and lighting on live HTML. The HTML
+ * layout is captured as a texture and composited onto a procedural wall
+ * surface. Per-pixel gallery lighting (overhead spots, inverse-square falloff)
+ * varies brightness within individual elements — impossible with CSS, which
+ * applies brightness uniformly per-element. Shadows and light spill cross
+ * element boundaries because the shader operates on the composite texture.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createQuadVAO } from '../../lib/gl';
 import { PaintTracker } from '../../lib/paint-tracker';
@@ -136,6 +146,7 @@ export default function createWallExhibition(ctx: ModeContext): ModeImpl {
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
       gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
+      // u_scrollY: normalized scroll position — shifts which overhead lights are active
       gl.uniform1f(uniform(gl, program, 'u_scrollY'), scrollY);
       gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);
       quad.draw();

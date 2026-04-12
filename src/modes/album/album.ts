@@ -1,3 +1,12 @@
+/**
+ * Album mode — a photo book with real page-curl transitions.
+ *
+ * Demonstrates vertex displacement on live HTML: each page spread (text,
+ * images, EXIF data) is captured as a texture and mapped onto a tessellated
+ * quad. The page-curl shader bends vertices along a curve while the HTML
+ * content follows the deformation. CSS 3D transforms can only do rigid
+ * rotateY flips — curving content along an arbitrary path requires HiC.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture } from '../../lib/gl';
 import { loadPhoto } from '../../lib/photos';
@@ -93,6 +102,8 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
   const texCurrent = createElementTexture(gl);
   const texNext = createElementTexture(gl);
 
+  // Album manages its own paint handler (not PaintTracker) because it needs
+  // two textures — current page and next page — uploaded in the same paint cycle.
   const onPaint = ((e: PaintEvent) => {
     for (const el of e.changedElements) {
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
@@ -111,6 +122,7 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
   canvas.addEventListener('paint', onPaint);
 
   const program = getCachedProgram(gl, vertexSrc, pageCurlSrc);
+  // 40x30 tessellation: enough vertices for a smooth curl without visible faceting
   const mesh = createTessellatedQuad(gl, 40, 30);
 
   createPageHTML(pageEl, null, true);
@@ -161,6 +173,7 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
         mesh.draw();
 
         gl.bindTexture(gl.TEXTURE_2D, texCurrent);
+        // u_curlProgress drives vertex displacement: 0 = flat, 1 = fully curled over
         gl.uniform1f(uniform(gl, program, 'u_curlProgress'), easedProgress);
         gl.uniform1f(uniform(gl, program, 'u_isBack'), 0.0);
         mesh.draw();

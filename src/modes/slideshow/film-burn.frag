@@ -1,12 +1,17 @@
+// Film burn transition — simulates celluloid film melting/burning during a
+// projector changeover. Bright areas and edges burn through first (based on
+// luminance + edge distance), revealing the next slide underneath. A hot-glow
+// edge effect (warm white) highlights the burn boundary. The noise prevents
+// the burn from looking too uniform — real film burns are chaotic.
 #version 300 es
 precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
 
-uniform sampler2D u_from;
-uniform sampler2D u_to;
-uniform float u_progress;
+uniform sampler2D u_from;     // outgoing slide (photo + caption as one HTML texture)
+uniform sampler2D u_to;       // incoming slide
+uniform float u_progress;     // 0..1 transition progress
 uniform vec2 u_resolution;
 
 vec3 srgbToLinear(vec3 c) {

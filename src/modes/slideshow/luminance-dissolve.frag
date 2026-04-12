@@ -1,12 +1,17 @@
+// Luminance dissolve transition — pixels transition based on their brightness.
+// Bright areas of the outgoing slide dissolve first, dark areas last. This
+// creates an organic, non-uniform wipe that follows image content rather than
+// a geometric pattern. A subtle glow at the dissolve boundary adds polish.
+// The threshold sweeps from -0.2 to ~1.2 to ensure full coverage.
 #version 300 es
 precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
 
-uniform sampler2D u_from;
-uniform sampler2D u_to;
-uniform float u_progress;
+uniform sampler2D u_from;     // outgoing slide
+uniform sampler2D u_to;       // incoming slide
+uniform float u_progress;     // 0..1 — sweeps the luminance threshold
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

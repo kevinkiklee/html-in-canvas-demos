@@ -1,3 +1,11 @@
+/**
+ * Shell — the single render controller for the HTML-in-Canvas portfolio.
+ *
+ * The shell owns the one WebGL2 context and the one RAF loop. Modes never
+ * create their own context or loop — they plug render functions into the
+ * shell via setModeHook/setOverlayHook. This guarantees a single GPU
+ * pipeline and avoids the context-limit (browsers cap WebGL contexts at ~8).
+ */
 import { initGL, createQuadVAO, getCachedProgram, uniform, type QuadVAO } from './lib/gl';
 import { PaintTracker } from './lib/paint-tracker';
 import vertexSrc from './shaders/vertex.glsl?raw';
@@ -25,6 +33,10 @@ export class Shell {
 
   constructor(container: HTMLElement) {
     this.canvas = document.createElement('canvas');
+    // `layoutsubtree` is the HiC opt-in: it tells the browser that this canvas's
+    // children are live DOM that should be laid out, receive events, and participate
+    // in accessibility — but NOT visually painted unless explicitly drawn via
+    // drawElementImage (2D) or texElementImage2D (WebGL).
     this.canvas.setAttribute('layoutsubtree', '');
     container.appendChild(this.canvas);
 
@@ -33,6 +45,11 @@ export class Shell {
     this.quad = createQuadVAO(this.gl);
     this.passthroughProgram = getCachedProgram(this.gl, vertexSrc, passthroughSrc);
 
+    // The `paint` event is the ONLY safe place to call texElementImage2D.
+    // Calling it outside this handler (e.g., in RAF or a click handler) crashes
+    // the GPU process. The browser fires `paint` after layout when subtree
+    // children have changed pixels — we upload textures here, then schedule a
+    // RAF frame to draw them.
     this.canvas.addEventListener('paint', ((e: PaintEvent) => {
       this.tracker.handlePaint(e.changedElements);
       this.dirty = true;
@@ -51,6 +68,8 @@ export class Shell {
   private resizeRaf = 0;
 
   private handleResize = (): void => {
+    // HiC rule: size the backing buffer to CSS pixels * DPR, or text captured
+    // from subtree children will be blurry on retina displays.
     this.dpr = window.devicePixelRatio || 1;
     this.size.w = this.canvas.clientWidth;
     this.size.h = this.canvas.clientHeight;
@@ -68,6 +87,10 @@ export class Shell {
     this.resizeRaf = requestAnimationFrame(this.handleResize);
   };
 
+  // Dirty-flag RAF loop: we only run frames when something changed (paint fired,
+  // a mode requested a draw, or a mode declared itself animating). This avoids
+  // wasting GPU cycles when the portfolio is static — most modes are idle until
+  // user interaction or a transition.
   private draw = (now: number): void => {
     if (document.hidden) {
       this.sleep();
@@ -139,6 +162,9 @@ export class Shell {
     }
   }
 
+  // Mode hook pattern: the shell owns the GL context and RAF loop; modes inject
+  // their render logic as callbacks. This inversion of control lets modes focus
+  // purely on drawing while the shell handles timing, dirty tracking, and sleep.
   setModeHook(hook: ModeHook | null): void {
     this.modeHook = hook;
   }

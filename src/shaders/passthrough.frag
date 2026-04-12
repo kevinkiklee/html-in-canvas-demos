@@ -1,3 +1,6 @@
+// Passthrough fragment shader — draws an HTML texture with no effects.
+// Used by the shell as the default renderer when no mode hook is set,
+// and by modes (e.g., slideshow) for static display between transitions.
 #version 300 es
 precision highp float;
 

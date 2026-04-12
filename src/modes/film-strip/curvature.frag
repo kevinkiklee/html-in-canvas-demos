@@ -1,13 +1,20 @@
+// Curvature fragment shader — bends the filmstrip into a 3D-looking surface.
+// Displaces UV coordinates quadratically based on horizontal distance from
+// center, simulating a film strip curving away from the viewer at the edges.
+// Also applies edge darkening (simulating light falloff on a curved surface)
+// and a subtle center glow (the "sweet spot" where film sits flat on a light
+// table). This is a UV-space effect, not vertex displacement — simpler but
+// effective for a single-axis curve.
 #version 300 es
 precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
 
-uniform sampler2D u_tex;
+uniform sampler2D u_tex;          // composite filmstrip HTML texture
 uniform vec2 u_resolution;
-uniform float u_curvature;
-uniform float u_scrollOffset;
+uniform float u_curvature;        // bend amount (0 = flat, 0.12 = subtle curve)
+uniform float u_scrollOffset;     // normalized horizontal scroll position
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

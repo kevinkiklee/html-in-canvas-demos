@@ -1,12 +1,19 @@
+// Spotlight fragment shader — cursor-following light on a dark table.
+// Combines three effects that are impossible with CSS on individual elements:
+//   1. Radial brightness falloff from the cursor (smoothstep, not per-element)
+//   2. Distance-based Gaussian blur (sharp near cursor, soft far away)
+//   3. Vignette darkening at screen edges
+// All three operate on the composite HTML texture, so blur and light spill
+// cross element boundaries seamlessly — a photo's blur bleeds into its caption.
 #version 300 es
 precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
 
-uniform sampler2D u_tex;
-uniform vec2 u_mousePos;
-uniform vec2 u_resolution;
+uniform sampler2D u_tex;      // composite HTML texture (entire photo grid)
+uniform vec2 u_mousePos;      // normalized cursor position in UV space
+uniform vec2 u_resolution;    // pixel dimensions for texel size calculation
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

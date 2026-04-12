@@ -15,7 +15,10 @@ import { createDetailView } from './detail/detail';
 import type { ModeName, ModeImpl, ModeContext } from './types';
 import { MODE_ORDER } from './types';
 
-// --- Feature detection gate ---
+// Feature detection gate: HiC requires three browser APIs (requestPaint,
+// texElementImage2D, drawElementImage). Without all three, we show a graceful
+// fallback explaining how to enable the Chrome flag. This runs synchronously
+// before any WebGL setup to avoid wasting resources on unsupported browsers.
 const support = detectHtmlInCanvas();
 if (support !== 'supported') {
   document.getElementById('app')!.innerHTML = `
@@ -42,6 +45,10 @@ const shell = new Shell(container);
 let currentMode: ModeImpl | null = null;
 let currentModeName: ModeName = 'album';
 
+// Modes are dynamically imported so each mode's shader GLSL, HTML templates,
+// and logic are code-split into separate chunks. The user only downloads the
+// mode they're viewing — important because each mode includes 1-3 GLSL shaders
+// that would bloat the initial bundle if statically imported.
 const modeLoaders: Record<ModeName, () => Promise<{ default: (ctx: ModeContext) => ModeImpl }>> = {
   album: () => import('./modes/album/album'),
   slideshow: () => import('./modes/slideshow/slideshow'),
@@ -93,6 +100,10 @@ async function switchMode(name: ModeName): Promise<void> {
     learn.setMode(name);
   };
 
+  // View Transitions API: provides a cross-fade between old and new mode
+  // content. Falls back to an instant switch on browsers without the API.
+  // The transition animates the canvas surface itself, so the outgoing mode's
+  // last frame fades into the incoming mode's first frame.
   if (document.startViewTransition) {
     document.startViewTransition(doSwitch);
   } else {

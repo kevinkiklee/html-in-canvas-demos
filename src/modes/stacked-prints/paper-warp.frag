@@ -1,14 +1,20 @@
+// Paper warp fragment shader — simulates flexible paper being lifted and tossed.
+// Displaces UV coordinates radially from the grab point using a sine wave,
+// creating a natural paper-curl effect. Also adds paper texture noise, a
+// depth-based shadow (darker when lifted higher), and a warm tint.
+// The UV displacement works on the composite HTML texture, so the photo,
+// caption, and EXIF data all warp together as one continuous surface.
 #version 300 es
 precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
 
-uniform sampler2D u_tex;
+uniform sampler2D u_tex;          // print face HTML texture (photo + caption)
 uniform vec2 u_resolution;
-uniform vec2 u_grabPoint;
-uniform float u_liftAmount;
-uniform float u_isBack;
+uniform vec2 u_grabPoint;         // normalized position where user grabbed the print
+uniform float u_liftAmount;       // how far the paper is lifted (drives warp intensity)
+uniform float u_isBack;           // 1.0 when rendering print back (mirrors UV horizontally)
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

@@ -1,3 +1,8 @@
+// Page curl fragment shader — adds paper texture, spine shadow, and warm tint
+// to the HTML page texture. The curl deformation itself is vertex displacement
+// (handled by the tessellated mesh + vertex shader); this shader handles the
+// surface appearance: paper noise grain, a darkened spine edge, a shadow that
+// deepens as the page curls, and a warm color tint simulating aged paper.
 #version 300 es
 precision highp float;
 
@@ -5,8 +10,8 @@ in vec2 v_uv;
 out vec4 frag_color;
 
 uniform sampler2D u_tex;
-uniform float u_curlProgress;
-uniform float u_isBack;
+uniform float u_curlProgress;  // 0 = flat, 1 = fully turned
+uniform float u_isBack;        // 1.0 when rendering the page back (mirrors UV)
 uniform vec2 u_resolution;
 
 vec3 srgbToLinear(vec3 c) {

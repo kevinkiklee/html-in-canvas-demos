@@ -1,13 +1,18 @@
+// Rack focus transition — simulates a cinema lens pull: the outgoing slide
+// blurs out of focus while the incoming slide racks into focus. Both slides
+// use a 13-tap Poisson disc blur whose radius is driven by u_progress. The
+// blend happens in the middle (0.3–0.7) when both are slightly soft, just
+// like a real focus pull where neither subject is perfectly sharp mid-rack.
 #version 300 es
 precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
 
-uniform sampler2D u_from;
-uniform sampler2D u_to;
-uniform float u_progress;
-uniform vec2 u_resolution;
+uniform sampler2D u_from;     // outgoing slide
+uniform sampler2D u_to;       // incoming slide
+uniform float u_progress;     // 0..1 — controls blur radii and blend point
+uniform vec2 u_resolution;    // pixel dimensions for texel size calculation
 
 vec3 srgbToLinear(vec3 c) {
   return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));

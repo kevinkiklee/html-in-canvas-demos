@@ -1,3 +1,12 @@
+/**
+ * Film Strip mode — a horizontal filmstrip that curves like real film.
+ *
+ * Demonstrates UV-space curvature on a composite HTML texture. The strip
+ * (photos, sprocket holes, frame counters) is captured as one texture, and
+ * the curvature shader bends UV coordinates to simulate a 3D film surface.
+ * CSS 3D can angle individual elements, but cannot curve an entire continuous
+ * layout as one surface — the gaps, sprockets, and text must all bend together.
+ */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createQuadVAO } from '../../lib/gl';
 import { PaintTracker } from '../../lib/paint-tracker';
@@ -144,6 +153,8 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
       gl.bindTexture(gl.TEXTURE_2D, tex);
       gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
       gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
+      // u_curvature: how much the film bends (higher = more dramatic curve)
+      // u_scrollOffset: normalized scroll position for parallax-like effects
       gl.uniform1f(uniform(gl, program, 'u_curvature'), 0.12);
       gl.uniform1f(uniform(gl, program, 'u_scrollOffset'), scrollOffset);
       gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);
