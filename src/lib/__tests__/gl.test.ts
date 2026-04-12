@@ -125,6 +125,20 @@ describe('compileShader', () => {
       'undefined variable foo',
     );
   });
+
+  it('handles null return from getShaderInfoLog gracefully', () => {
+    const base = makeBaseGL();
+    const gl = {
+      ...base,
+      getShaderParameter: vi.fn(() => false),
+      getShaderInfoLog: vi.fn(() => null),
+    } as unknown as WebGL2RenderingContext;
+
+    expect(() => compileShader(gl, (gl as any).VERTEX_SHADER, 'bad')).toThrow(
+      'Shader compile failed',
+    );
+    expect((gl as any).deleteShader).toHaveBeenCalled();
+  });
 });
 
 // ---------------------------------------------------------------------------

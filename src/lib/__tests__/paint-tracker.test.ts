@@ -256,5 +256,43 @@ describe('PaintTracker', () => {
       expect(() => tracker.handlePaint([unregistered])).not.toThrow();
       expect(tracker.hasFirstPaint()).toBe(false);
     });
+
+    it('handles a mix of registered and unregistered elements', () => {
+      const registered = makeEl();
+      const unregistered = makeEl();
+      tracker.register(registered, 'reg');
+      expect(() => tracker.handlePaint([unregistered, registered])).not.toThrow();
+      expect(tracker.hasFirstPaint()).toBe(true);
+    });
+
+    it('handles an empty array without throwing', () => {
+      expect(() => tracker.handlePaint([])).not.toThrow();
+      expect(tracker.hasFirstPaint()).toBe(false);
+    });
+  });
+
+  describe('multiple registrations then dispose', () => {
+    it('registers many elements, disposes all, then re-registers cleanly', () => {
+      const elements = Array.from({ length: 10 }, (_, i) => makeEl(50 + i, 50 + i));
+      for (let i = 0; i < elements.length; i++) {
+        tracker.register(elements[i], `multi-${i}`);
+      }
+      expect(gl.createTexture).toHaveBeenCalledTimes(10);
+      for (let i = 0; i < elements.length; i++) {
+        expect(tracker.getTexture(`multi-${i}`)).not.toBeNull();
+      }
+
+      tracker.dispose();
+
+      for (let i = 0; i < elements.length; i++) {
+        expect(tracker.getTexture(`multi-${i}`)).toBeNull();
+      }
+      expect(gl.deleteTexture).toHaveBeenCalledTimes(10);
+
+      // Re-register after dispose should work
+      const fresh = makeEl();
+      tracker.register(fresh, 'fresh');
+      expect(tracker.getTexture('fresh')).not.toBeNull();
+    });
   });
 });

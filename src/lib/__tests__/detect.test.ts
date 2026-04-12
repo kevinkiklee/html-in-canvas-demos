@@ -91,4 +91,19 @@ describe('detectHtmlInCanvas', () => {
       delete (globalThis as any).CanvasRenderingContext2D;
     }
   });
+
+  it('returns "missing-api" when getContext("webgl2") returns null (WebGL2 not available)', () => {
+    (HTMLCanvasElement.prototype as any).requestPaint = vi.fn();
+    const original = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, contextId: string, ...args: any[]) {
+      if (contextId === 'webgl2') return null as any;
+      return (original as any).call(this, contextId, ...args);
+    } as any;
+
+    try {
+      expect(detectHtmlInCanvas()).toBe('missing-api');
+    } finally {
+      HTMLCanvasElement.prototype.getContext = original;
+    }
+  });
 });
