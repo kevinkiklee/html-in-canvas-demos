@@ -1,0 +1,170 @@
+import type { ModeImpl, ModeContext, Photo } from '../../types';
+import { getCachedProgram, uniform, createQuadVAO } from '../../lib/gl';
+import { PaintTracker } from '../../lib/paint-tracker';
+import { loadPhoto, formatExif } from '../../lib/photos';
+import vertexSrc from '../../shaders/vertex.glsl?raw';
+import curvatureSrc from './curvature.frag?raw';
+
+const FRAME_WIDTH = 280;
+const SPROCKET_SIZE = 12;
+
+function createStripHTML(root: HTMLElement, photos: Photo[]): void {
+  root.style.cssText = `
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 2rem 4rem;
+    background: #0a0a0b;
+    gap: 0;
+    white-space: nowrap;
+  `;
+
+  for (let i = 0; i < photos.length; i++) {
+    const photo = photos[i];
+    const frame = document.createElement('div');
+    frame.dataset.index = String(i);
+    frame.style.cssText = `
+      flex: 0 0 ${FRAME_WIDTH}px;
+      background: #181818;
+      border-left: 2px solid #222;
+      border-right: 2px solid #222;
+      padding: 2rem 0.75rem;
+      position: relative;
+      cursor: pointer;
+    `;
+
+    for (const pos of ['top', 'bottom'] as const) {
+      const sprockets = document.createElement('div');
+      sprockets.style.cssText = `
+        position: absolute;
+        ${pos}: 6px;
+        left: 0; right: 0;
+        display: flex;
+        justify-content: space-evenly;
+        padding: 0 1rem;
+      `;
+      for (let s = 0; s < 4; s++) {
+        const hole = document.createElement('div');
+        hole.style.cssText = `
+          width: ${SPROCKET_SIZE}px;
+          height: ${SPROCKET_SIZE}px;
+          border-radius: 2px;
+          background: #0a0a0b;
+          border: 1px solid #333;
+        `;
+        sprockets.appendChild(hole);
+      }
+      frame.appendChild(sprockets);
+    }
+
+    const frameNum = document.createElement('div');
+    frameNum.style.cssText = `
+      position: absolute;
+      top: 22px; right: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      color: #444;
+    `;
+    frameNum.textContent = `${i + 1}A`;
+    frame.appendChild(frameNum);
+
+    const img = document.createElement('img');
+    img.style.cssText = `
+      width: 100%;
+      aspect-ratio: ${photo.width} / ${photo.height};
+      object-fit: cover;
+      display: block;
+    `;
+    loadPhoto(img, photo, 400);
+    frame.appendChild(img);
+
+    const caption = document.createElement('div');
+    caption.style.cssText = `
+      margin-top: 0.5rem;
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 10px;
+      color: #666;
+      white-space: normal;
+    `;
+    caption.textContent = photo.title || '';
+
+    const exif = document.createElement('div');
+    exif.className = 'exif-container';
+    exif.style.cssText = `
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px; color: #5a5650;
+    `;
+    exif.textContent = formatExif(photo);
+
+    frame.append(caption, exif);
+    root.appendChild(frame);
+  }
+}
+
+export default function createFilmStrip(ctx: ModeContext): ModeImpl {
+  const { gl, canvas, photos, requestDraw, openDetail } = ctx;
+
+  const root = document.createElement('div');
+  root.id = 'mode-root';
+  root.style.cssText = 'width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden;';
+  canvas.appendChild(root);
+
+  const tracker = new PaintTracker(gl);
+  tracker.register(root, 'mode-root');
+
+  createStripHTML(root, photos);
+
+  const onPaint = ((e: PaintEvent) => {
+    tracker.handlePaint(e.changedElements);
+    requestDraw();
+  }) as EventListener;
+  canvas.addEventListener('paint', onPaint);
+
+  const program = getCachedProgram(gl, vertexSrc, curvatureSrc);
+  const quad = createQuadVAO(gl);
+
+  canvas.requestPaint?.();
+
+  let scrollOffset = 0;
+  root.addEventListener('scroll', () => {
+    scrollOffset = root.scrollLeft / (root.scrollWidth - root.clientWidth);
+    canvas.requestPaint?.();
+    requestDraw();
+  });
+
+  const mode: ModeImpl = {
+    paint(_dt: number) {
+      if (!tracker.hasFirstPaint()) return;
+      const tex = tracker.getTexture('mode-root');
+      if (!tex) return;
+
+      gl.useProgram(program);
+      gl.activeTexture(gl.TEXTURE0);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.uniform1i(uniform(gl, program, 'u_tex'), 0);
+      gl.uniform2f(uniform(gl, program, 'u_resolution'), canvas.width, canvas.height);
+      gl.uniform1f(uniform(gl, program, 'u_curvature'), 0.12);
+      gl.uniform1f(uniform(gl, program, 'u_scrollOffset'), scrollOffset);
+      gl.uniform4f(uniform(gl, program, 'u_dst'), -1, -1, 2, 2);
+      quad.draw();
+    },
+
+    onPointer(ev: PointerEvent) {
+      if (ev.type === 'pointerdown') {
+        const frame = (ev.target as HTMLElement).closest('[data-index]') as HTMLElement | null;
+        if (frame) openDetail(parseInt(frame.dataset.index!, 10));
+      }
+    },
+
+    onResize() { requestDraw(); },
+
+    destroy() {
+      canvas.removeEventListener('paint', onPaint);
+      tracker.dispose();
+      quad.dispose();
+      root.remove();
+    },
+  };
+
+  return mode;
+}
