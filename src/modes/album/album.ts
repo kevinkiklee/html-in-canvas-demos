@@ -1,6 +1,6 @@
 import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture } from '../../lib/gl';
-import { loadPhoto, formatExif } from '../../lib/photos';
+import { loadPhoto } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import pageCurlSrc from './page-curl.frag?raw';
 

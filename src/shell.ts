@@ -62,7 +62,14 @@ export class Shell {
   };
 
   private draw = (now: number): void => {
-    if (document.hidden || !this.tracker.hasFirstPaint()) {
+    if (document.hidden) {
+      this.sleep();
+      return;
+    }
+
+    // When no mode hook is set, wait for shell's tracker to have paint data.
+    // When a mode hook IS set, the mode manages its own PaintTracker.
+    if (!this.modeHook && !this.tracker.hasFirstPaint()) {
       this.sleep();
       return;
     }
