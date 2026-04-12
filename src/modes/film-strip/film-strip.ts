@@ -69,6 +69,7 @@ function createStripHTML(root: HTMLElement, photos: Photo[]): void {
     frame.appendChild(frameNum);
 
     const img = document.createElement('img');
+    img.loading = 'lazy';
     img.style.cssText = `
       width: 100%;
       aspect-ratio: ${photo.width} / ${photo.height};
@@ -153,6 +154,13 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
       if (ev.type === 'pointerdown') {
         const frame = (ev.target as HTMLElement).closest('[data-index]') as HTMLElement | null;
         if (frame) openDetail(parseInt(frame.dataset.index!, 10));
+      }
+    },
+
+    onWheel(ev: WheelEvent) {
+      // Convert vertical scroll to horizontal scroll for the film strip
+      if (Math.abs(ev.deltaY) > Math.abs(ev.deltaX)) {
+        root.scrollLeft += ev.deltaY;
       }
     },
 

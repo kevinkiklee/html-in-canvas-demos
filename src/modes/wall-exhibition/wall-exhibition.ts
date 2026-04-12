@@ -24,6 +24,7 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
       section.dataset.index = String(i);
 
       const img = document.createElement('img');
+      img.loading = 'lazy';
       img.style.cssText = `
         width: 100%; object-fit: contain; cursor: pointer;
         box-shadow: 0 8px 40px rgba(0,0,0,0.5);
@@ -37,11 +38,17 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
         border: 1px solid rgba(255,255,255,0.04);
         background: rgba(20,20,22,0.5);
       `;
-      plaque.innerHTML = `
-        <div style="font-family:'Playfair Display',Georgia,serif;font-size:1rem;color:#e8e4df;">${photo.title || ''}</div>
-        <div style="font-size:0.8rem;color:#8a8680;margin-top:0.25rem;">${photo.description || ''}</div>
-        <div class="exif-container" style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#5a5650;margin-top:0.35rem;">${formatExif(photo)}</div>
-      `;
+      const plaqueTitle = document.createElement('div');
+      plaqueTitle.style.cssText = `font-family:'Playfair Display',Georgia,serif;font-size:1rem;color:#e8e4df;`;
+      plaqueTitle.textContent = photo.title || '';
+      const plaqueDesc = document.createElement('div');
+      plaqueDesc.style.cssText = `font-size:0.8rem;color:#8a8680;margin-top:0.25rem;`;
+      plaqueDesc.textContent = photo.description || '';
+      const plaqueExif = document.createElement('div');
+      plaqueExif.className = 'exif-container';
+      plaqueExif.style.cssText = `font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#5a5650;margin-top:0.35rem;`;
+      plaqueExif.textContent = formatExif(photo);
+      plaque.append(plaqueTitle, plaqueDesc, plaqueExif);
 
       section.append(img, plaque);
       root.appendChild(section);
@@ -60,6 +67,7 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
         card.style.cssText = `flex: 1; max-width: 360px; cursor: pointer;`;
 
         const img = document.createElement('img');
+        img.loading = 'lazy';
         img.style.cssText = `
           width: 100%; object-fit: contain;
           box-shadow: 0 4px 20px rgba(0,0,0,0.4);
@@ -68,10 +76,14 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
 
         const plaque = document.createElement('div');
         plaque.style.cssText = `margin-top: 0.75rem; text-align: center;`;
-        plaque.innerHTML = `
-          <div style="font-family:Inter,system-ui,sans-serif;font-size:0.85rem;color:#8a8680;">${photo.title || ''}</div>
-          <div class="exif-container" style="font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:#5a5650;margin-top:0.2rem;">${formatExif(photo)}</div>
-        `;
+        const clusterTitle = document.createElement('div');
+        clusterTitle.style.cssText = `font-family:Inter,system-ui,sans-serif;font-size:0.85rem;color:#8a8680;`;
+        clusterTitle.textContent = photo.title || '';
+        const clusterExif = document.createElement('div');
+        clusterExif.className = 'exif-container';
+        clusterExif.style.cssText = `font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:#5a5650;margin-top:0.2rem;`;
+        clusterExif.textContent = formatExif(photo);
+        plaque.append(clusterTitle, clusterExif);
 
         card.append(img, plaque);
         cluster.appendChild(card);

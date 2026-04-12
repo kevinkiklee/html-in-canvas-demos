@@ -73,12 +73,16 @@ export class PaintTracker {
     return this._hasFirstPaint;
   }
 
-  dispose(): void {
+  clear(): void {
     for (const entry of this.entries.values()) {
       this.gl.deleteTexture(entry.texture);
     }
     this.entries.clear();
     this._dirty = false;
     this._hasFirstPaint = false;
+  }
+
+  dispose(): void {
+    this.clear();
   }
 }

@@ -1,6 +1,15 @@
 import type { Photo, PhotoManifest } from '../types';
 import manifest from '../photos.json';
 
+export function escapeHTML(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 const data = manifest as PhotoManifest;
 
 function shuffle<T>(arr: T[]): T[] {

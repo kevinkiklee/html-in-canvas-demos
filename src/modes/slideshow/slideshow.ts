@@ -2,6 +2,7 @@ import type { ModeImpl, ModeContext, Photo } from '../../types';
 import { getCachedProgram, uniform, createQuadVAO, createElementTexture } from '../../lib/gl';
 import { loadPhoto, formatExif } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
+import passthroughSrc from '../../shaders/passthrough.frag?raw';
 import filmBurnSrc from './film-burn.frag?raw';
 import rackFocusSrc from './rack-focus.frag?raw';
 import lumDissolveSrc from './luminance-dissolve.frag?raw';
@@ -77,6 +78,7 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
   }) as EventListener;
   canvas.addEventListener('paint', onPaint);
 
+  const passthroughProgram = getCachedProgram(gl, vertexSrc, passthroughSrc);
   const shaders = [
     getCachedProgram(gl, vertexSrc, filmBurnSrc),
     getCachedProgram(gl, vertexSrc, rackFocusSrc),
@@ -133,17 +135,11 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
         }
       } else {
         const tex = currentIsA ? texA : texB;
-        const prog = shaders[1];
-        gl.useProgram(prog);
+        gl.useProgram(passthroughProgram);
         gl.activeTexture(gl.TEXTURE0);
         gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.uniform1i(uniform(gl, prog, 'u_from'), 0);
-        gl.activeTexture(gl.TEXTURE1);
-        gl.bindTexture(gl.TEXTURE_2D, tex);
-        gl.uniform1i(uniform(gl, prog, 'u_to'), 1);
-        gl.uniform1f(uniform(gl, prog, 'u_progress'), 0.0);
-        gl.uniform2f(uniform(gl, prog, 'u_resolution'), canvas.width, canvas.height);
-        gl.uniform4f(uniform(gl, prog, 'u_dst'), -1, -1, 2, 2);
+        gl.uniform1i(uniform(gl, passthroughProgram, 'u_tex'), 0);
+        gl.uniform4f(uniform(gl, passthroughProgram, 'u_dst'), -1, -1, 2, 2);
         quad.draw();
       }
     },
@@ -151,6 +147,12 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
     isAnimating() { return transitioning; },
 
     onPointer(ev: PointerEvent) {
+      if (ev.type === 'pointermove') {
+        const rect = canvas.getBoundingClientRect();
+        const x = (ev.clientX - rect.left) / rect.width;
+        canvas.style.cursor = (x < 0.3 || x > 0.7) ? 'pointer' : 'default';
+        return;
+      }
       if (ev.type !== 'pointerdown' || transitioning) return;
       const rect = canvas.getBoundingClientRect();
       const x = (ev.clientX - rect.left) / rect.width;
@@ -158,10 +160,16 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
       else if (x > 0.7) startTransition(currentIndex + 1);
     },
 
+    onKeydown(ev: KeyboardEvent) {
+      if (ev.key === 'ArrowRight') startTransition(currentIndex + 1);
+      else if (ev.key === 'ArrowLeft') startTransition(currentIndex - 1);
+    },
+
     onResize() { requestDraw(); },
 
     destroy() {
       canvas.removeEventListener('paint', onPaint);
+      canvas.style.cursor = '';
       gl.deleteTexture(texA);
       gl.deleteTexture(texB);
       quad.dispose();

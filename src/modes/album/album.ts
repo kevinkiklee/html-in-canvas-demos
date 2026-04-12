@@ -64,10 +64,11 @@ function createPageHTML(container: HTMLElement, photo: Photo | null, isCover: bo
     font-size: 0.75rem; color: #5a5650; line-height: 1.8;
   `;
   const e = photo.exif;
-  exif.innerHTML = [e.focalLength, e.aperture, e.shutterSpeed, e.iso]
-    .filter(Boolean)
-    .map(s => `<div>${s}</div>`)
-    .join('');
+  for (const val of [e.focalLength, e.aperture, e.shutterSpeed, e.iso].filter(Boolean)) {
+    const row = document.createElement('div');
+    row.textContent = val;
+    exif.appendChild(row);
+  }
 
   info.append(title, desc, exif);
   wrapper.append(imgWrap, info);
@@ -188,6 +189,12 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
     isAnimating() { return turning; },
 
     onPointer(ev: PointerEvent) {
+      if (ev.type === 'pointermove') {
+        const rect = canvas.getBoundingClientRect();
+        const x = (ev.clientX - rect.left) / rect.width;
+        canvas.style.cursor = (x > 0.65 || x < 0.35) ? 'pointer' : 'default';
+        return;
+      }
       if (ev.type !== 'pointerdown' || turning) return;
       const rect = canvas.getBoundingClientRect();
       const x = (ev.clientX - rect.left) / rect.width;
@@ -195,10 +202,16 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
       else if (x < 0.35) turnPage(-1);
     },
 
+    onKeydown(ev: KeyboardEvent) {
+      if (ev.key === 'ArrowRight') turnPage(1);
+      else if (ev.key === 'ArrowLeft') turnPage(-1);
+    },
+
     onResize() { requestDraw(); },
 
     destroy() {
       canvas.removeEventListener('paint', onPaint);
+      canvas.style.cursor = '';
       gl.deleteTexture(texCurrent);
       gl.deleteTexture(texNext);
       mesh.dispose();

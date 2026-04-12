@@ -42,6 +42,8 @@ export interface ModeImpl {
   paint(dt: number): void;
   isAnimating?(): boolean;
   onPointer?(ev: PointerEvent): void;
+  onKeydown?(ev: KeyboardEvent): void;
+  onWheel?(ev: WheelEvent): void;
   onResize?(size: { w: number; h: number }): void;
   destroy(): void;
 }

@@ -19,67 +19,43 @@ function createPrintFrontHTML(el: HTMLElement, photo: Photo): void {
 
   const caption = document.createElement('div');
   caption.style.cssText = `margin-top: 1.5rem; text-align: center;`;
-  caption.innerHTML = `
-    <h3 style="font-family:'Playfair Display',Georgia,serif;font-size:1.3rem;color:#e8e4df;">${photo.title || ''}</h3>
-    <p style="font-size:0.85rem;color:#8a8680;margin-top:0.35rem;">${photo.description || ''}</p>
-    <div class="exif-container" style="font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#5a5650;margin-top:0.5rem;">
-      ${formatExif(photo)}
-    </div>
-  `;
+
+  const h3 = document.createElement('h3');
+  h3.style.cssText = `font-family:'Playfair Display',Georgia,serif;font-size:1.3rem;color:#e8e4df;`;
+  h3.textContent = photo.title || '';
+
+  const p = document.createElement('p');
+  p.style.cssText = `font-size:0.85rem;color:#8a8680;margin-top:0.35rem;`;
+  p.textContent = photo.description || '';
+
+  const exifDiv = document.createElement('div');
+  exifDiv.className = 'exif-container';
+  exifDiv.style.cssText = `font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:#5a5650;margin-top:0.5rem;`;
+  exifDiv.textContent = formatExif(photo);
+
+  caption.append(h3, p, exifDiv);
 
   el.append(img, caption);
 }
 
-function createPrintBackHTML(el: HTMLElement, photo: Photo): void {
-  el.innerHTML = '';
-  el.style.cssText = `
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    background: #1a1a1c; padding: 3rem;
-  `;
-
-  const info = document.createElement('div');
-  info.style.cssText = `text-align: center; max-width: 400px;`;
-  info.innerHTML = `
-    <div style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;color:#5a5650;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;">Technical Details</div>
-    <div style="font-family:'JetBrains Mono',monospace;font-size:1.1rem;color:#8a8680;line-height:2.2;">
-      ${photo.exif.focalLength ? `<div>${photo.exif.focalLength}</div>` : ''}
-      ${photo.exif.aperture ? `<div>${photo.exif.aperture}</div>` : ''}
-      ${photo.exif.shutterSpeed ? `<div>${photo.exif.shutterSpeed}</div>` : ''}
-      ${photo.exif.iso ? `<div>${photo.exif.iso}</div>` : ''}
-    </div>
-    <div style="margin-top:2rem;font-family:Inter,system-ui,sans-serif;font-size:0.85rem;color:#5a5650;">
-      ${photo.id}
-    </div>
-  `;
-
-  el.appendChild(info);
-}
 
 export default function createStackedPrints(ctx: ModeContext): ModeImpl {
   const { gl, canvas, photos, requestDraw, setAnimating } = ctx;
 
   const frontEl = document.createElement('div');
   frontEl.id = 'print-front';
-  const backEl = document.createElement('div');
-  backEl.id = 'print-back';
-  canvas.append(frontEl, backEl);
+  canvas.appendChild(frontEl);
 
   const texFront = createElementTexture(gl);
-  const texBack = createElementTexture(gl);
 
   const onPaint = ((e: PaintEvent) => {
     for (const el of e.changedElements) {
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       if (el === frontEl) {
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
         gl.bindTexture(gl.TEXTURE_2D, texFront);
         (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, frontEl);
+        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
       }
-      if (el === backEl) {
-        gl.bindTexture(gl.TEXTURE_2D, texBack);
-        (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, backEl);
-      }
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     }
     requestDraw();
   }) as EventListener;
@@ -99,7 +75,6 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
     if (index >= photos.length) return;
     currentIndex = index;
     createPrintFrontHTML(frontEl, photos[index]);
-    createPrintBackHTML(backEl, photos[index]);
     canvas.requestPaint?.();
   }
 
@@ -200,15 +175,20 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
       }
     },
 
+    onKeydown(ev: KeyboardEvent) {
+      if (ev.key === 'ArrowRight' || ev.key === ' ') {
+        grabPoint = { x: 0.5, y: 0.5 };
+        toss();
+      }
+    },
+
     onResize() { requestDraw(); },
 
     destroy() {
       canvas.removeEventListener('paint', onPaint);
       gl.deleteTexture(texFront);
-      gl.deleteTexture(texBack);
       mesh.dispose();
       frontEl.remove();
-      backEl.remove();
       counter.remove();
       resetBtn.remove();
     },

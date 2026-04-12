@@ -24,6 +24,7 @@ function createGridHTML(root: HTMLElement, photos: Photo[]): void {
     card.style.cssText = `cursor: pointer;`;
 
     const img = document.createElement('img');
+    img.loading = 'lazy';
     img.style.cssText = `
       width: 100%;
       aspect-ratio: ${photo.width} / ${photo.height};
@@ -62,6 +63,7 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
 
   const root = document.createElement('div');
   root.id = 'mode-root';
+  root.style.cssText = 'width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;';
   canvas.appendChild(root);
 
   const tracker = new PaintTracker(gl);
@@ -82,6 +84,11 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
   let mouseY = 0.5;
 
   canvas.requestPaint?.();
+
+  root.addEventListener('scroll', () => {
+    canvas.requestPaint?.();
+    requestDraw();
+  });
 
   const mode: ModeImpl = {
     paint(_dt: number) {

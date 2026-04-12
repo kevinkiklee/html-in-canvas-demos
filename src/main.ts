@@ -13,6 +13,7 @@ import { createLearnDrawer } from './learn/learn';
 import { createAboutPanel } from './about/about';
 import { createDetailView } from './detail/detail';
 import type { ModeName, ModeImpl, ModeContext } from './types';
+import { MODE_ORDER } from './types';
 
 // --- Feature detection gate ---
 const support = detectHtmlInCanvas();
@@ -125,9 +126,37 @@ shell.canvas.addEventListener('pointermove', (e) => currentMode?.onPointer?.(e))
 shell.canvas.addEventListener('pointerdown', (e) => currentMode?.onPointer?.(e));
 shell.canvas.addEventListener('pointerup', (e) => currentMode?.onPointer?.(e));
 
-// --- Resize events to current mode ---
+// --- Wheel events to current mode ---
+shell.canvas.addEventListener('wheel', (e) => {
+  if (currentMode?.onWheel) {
+    currentMode.onWheel(e);
+  }
+}, { passive: true });
+
+// --- Keyboard events: forward to mode + mode shortcuts ---
+document.addEventListener('keydown', (e) => {
+  // Don't intercept when detail view is open (it has its own handler)
+  if (detail.isOpen()) return;
+
+  // Mode shortcut keys: 1-7
+  const num = parseInt(e.key, 10);
+  if (num >= 1 && num <= MODE_ORDER.length) {
+    e.preventDefault();
+    switchMode(MODE_ORDER[num - 1]);
+    return;
+  }
+
+  // Forward to current mode
+  currentMode?.onKeydown?.(e);
+});
+
+// --- Debounced resize events to current mode ---
+let resizeTimer = 0;
 window.addEventListener('resize', () => {
-  currentMode?.onResize?.(shell.size);
+  cancelAnimationFrame(resizeTimer);
+  resizeTimer = requestAnimationFrame(() => {
+    currentMode?.onResize?.(shell.size);
+  });
 });
 
 // --- Boot default mode ---

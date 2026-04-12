@@ -40,13 +40,15 @@ export class Shell {
     }) as EventListener);
 
     this.handleResize();
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener('resize', this.debouncedResize);
 
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) this.sleep();
       else if (this.animating || this.dirty) this.wake();
     });
   }
+
+  private resizeRaf = 0;
 
   private handleResize = (): void => {
     this.dpr = window.devicePixelRatio || 1;
@@ -59,6 +61,11 @@ export class Shell {
     this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
     this.dirty = true;
     this.wake();
+  };
+
+  private debouncedResize = (): void => {
+    cancelAnimationFrame(this.resizeRaf);
+    this.resizeRaf = requestAnimationFrame(this.handleResize);
   };
 
   private draw = (now: number): void => {
@@ -154,7 +161,7 @@ export class Shell {
     while (this.canvas.firstChild) {
       this.canvas.removeChild(this.canvas.firstChild);
     }
-    this.tracker.dispose();
+    this.tracker.clear();
   }
 
   createModeRoot(): HTMLDivElement {
@@ -171,7 +178,8 @@ export class Shell {
 
   dispose(): void {
     this.sleep();
-    window.removeEventListener('resize', this.handleResize);
+    cancelAnimationFrame(this.resizeRaf);
+    window.removeEventListener('resize', this.debouncedResize);
     this.tracker.dispose();
     this.quad.dispose();
   }
