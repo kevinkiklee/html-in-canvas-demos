@@ -60,6 +60,8 @@ export function createLearnDrawer(): LearnDrawer {
       setTimeout(() => {
         titleEl.textContent = content.title;
         descEl.textContent = content.description;
+        // innerHTML is intentional here — content is trusted static HTML from
+        // learn/content.ts containing <code> and <em> formatting tags, not user input.
         howEl.innerHTML = content.howItWorks;
         whyEl.innerHTML = content.whyHiC;
         codeEl.textContent = content.keyCode;

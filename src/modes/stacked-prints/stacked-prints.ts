@@ -48,7 +48,6 @@ function createPrintFrontHTML(el: HTMLElement, photo: Photo): void {
   el.append(img, caption);
 }
 
-
 export default function createStackedPrints(ctx: ModeContext): ModeImpl {
   const { gl, canvas, photos, requestDraw, setAnimating } = ctx;
 

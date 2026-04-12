@@ -4,6 +4,7 @@ import manifest from '../../photos.json';
 
 // Import functions under test
 import {
+  escapeHTML,
   getShuffledPhotos,
   responsiveSrc,
   formatExif,
@@ -200,5 +201,37 @@ describe('loadPhoto', () => {
     // on any Image created during the call. We check that the callback is
     // wired (not yet called synchronously).
     expect(onLoad).not.toHaveBeenCalled();
+  });
+});
+
+describe('escapeHTML', () => {
+  it('escapes ampersands', () => {
+    expect(escapeHTML('a & b')).toBe('a &amp; b');
+  });
+
+  it('escapes angle brackets', () => {
+    expect(escapeHTML('<script>')).toBe('&lt;script&gt;');
+  });
+
+  it('escapes double quotes', () => {
+    expect(escapeHTML('"hello"')).toBe('&quot;hello&quot;');
+  });
+
+  it('escapes single quotes', () => {
+    expect(escapeHTML("it's")).toBe('it&#39;s');
+  });
+
+  it('escapes all special characters in a mixed string', () => {
+    expect(escapeHTML('<a href="x" data-v=\'y\'>&</a>')).toBe(
+      '&lt;a href=&quot;x&quot; data-v=&#39;y&#39;&gt;&amp;&lt;/a&gt;',
+    );
+  });
+
+  it('returns empty string for empty input', () => {
+    expect(escapeHTML('')).toBe('');
+  });
+
+  it('returns plain text unchanged', () => {
+    expect(escapeHTML('Hello World 123')).toBe('Hello World 123');
   });
 });

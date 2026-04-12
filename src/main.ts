@@ -117,7 +117,11 @@ async function switchMode(name: ModeName): Promise<void> {
   // last frame fades into the incoming mode's first frame.
   try {
     if (document.startViewTransition) {
-      document.startViewTransition(doSwitch);
+      // Await the transition's finished promise so the `switching` lock stays
+      // held until the new mode is fully initialized. Without this, the lock
+      // releases immediately and rapid clicks could trigger overlapping switches.
+      const transition = document.startViewTransition(doSwitch);
+      await transition.finished;
     } else {
       await doSwitch();
     }

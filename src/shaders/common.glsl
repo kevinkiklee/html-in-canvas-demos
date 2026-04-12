@@ -1,5 +1,11 @@
 // Common GLSL utilities shared across all mode shaders.
 //
+// NOTE: This file is a REFERENCE — it is not automatically concatenated into
+// mode shaders. Each .frag file inlines the functions it needs (srgbToLinear,
+// linearToSrgb, hash21, discBlur) because Vite's `?raw` import returns plain
+// strings with no #include mechanism. Keep this file as the canonical source
+// of truth: when updating a function here, update all .frag copies too.
+//
 // sRGB linearization is critical for HTML-in-Canvas: textures captured from
 // DOM elements are in sRGB gamma space. Doing math (blending, lighting, blur)
 // directly on sRGB values produces incorrect results — washed highlights,
