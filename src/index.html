@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photography Portfolio</title>
+  <meta name="description" content="A photography portfolio built with HTML-in-Canvas — live HTML rendered through custom WebGL2 shaders." />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Photography Portfolio" />
+  <meta property="og:description" content="Seven viewing modes, each enhanced by HTML-in-Canvas — an experimental web API that lets you apply custom GLSL shaders to live HTML content." />
+  <meta property="og:type" content="website" />
+
+  <!-- Preload heading font for LCP -->
+  <link rel="preload" href="/fonts/playfair-display-italic.woff2" as="font" type="font/woff2" crossorigin />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ImageGallery",
+    "name": "Photography Portfolio",
+    "description": "A photography portfolio showcasing HTML-in-Canvas technology",
+    "author": {
+      "@type": "Person",
+      "name": "Photographer"
+    }
+  }
+  </script>
+
+  <script type="module" src="/main.ts"></script>
+</head>
+<body>
+  <div id="app">
+    <nav id="main-nav"></nav>
+    <main id="canvas-container"></main>
+    <aside id="learn-drawer" class="drawer-closed"></aside>
+    <div id="about-panel" class="panel-hidden"></div>
+    <div id="detail-view" class="detail-hidden"></div>
+  </div>
+
+  <noscript>
+    <style>
+      #app { display: none; }
+      .noscript-fallback { padding: 2rem; color: #e8e4df; background: #0a0a0b; font-family: system-ui; }
+    </style>
+    <div class="noscript-fallback">
+      <h1>Photography Portfolio</h1>
+      <p>This portfolio requires JavaScript and Chrome Canary with the HTML-in-Canvas flag enabled.</p>
+    </div>
+  </noscript>
+</body>
+</html>
