@@ -52,30 +52,24 @@ export interface ModeImpl {
 export type ModeFactory = (ctx: ModeContext) => ModeImpl;
 
 export type ModeName =
-  | 'album'
   | 'slideshow'
   | 'print-table'
   | 'film-strip'
   | 'wall-exhibition'
-  | 'stacked-prints'
-  | 'collage';
+  | 'gallery-walk';
 
 export const MODE_LABELS: Record<ModeName, string> = {
-  album: 'Album',
   slideshow: 'Slideshow',
   'print-table': 'Prints',
   'film-strip': 'Strip',
   'wall-exhibition': 'Wall',
-  'stacked-prints': 'Stack',
-  collage: 'Collage',
+  'gallery-walk': 'Gallery',
 };
 
 export const MODE_ORDER: ModeName[] = [
-  'album',
   'slideshow',
   'print-table',
   'film-strip',
   'wall-exhibition',
-  'stacked-prints',
-  'collage',
+  'gallery-walk',
 ];

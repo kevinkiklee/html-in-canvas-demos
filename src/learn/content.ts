@@ -9,13 +9,6 @@ interface LearnContent {
 }
 
 export const LEARN_CONTENT: Record<ModeName, LearnContent> = {
-  album: {
-    title: 'Album',
-    description: 'A photo book you flip through — pages curl and bend like real paper, with live text and images deforming along the surface.',
-    howItWorks: 'Each page spread is live HTML (real text, real images, EXIF metadata) captured as a WebGL texture via <code>texElementImage2D</code> inside the <code>paint</code> event handler. The page is rendered onto a 40x30 tessellated quad, and the page-curl shader displaces vertices along a cubic-eased curl curve. Even flat pages get a paper texture overlay (procedural noise) and a spine shadow darkening the left edge.',
-    whyHiC: 'CSS 3D transforms only do rigid transforms like <code>rotateY</code> — the entire element rotates as a flat plane. Curling or bending content along an arbitrary curve requires per-vertex displacement of a tessellated mesh with the live HTML mapped as a texture. Without HiC, you\'d need to pre-render all text and images as static bitmaps, losing accessibility (screen readers can\'t read image text), text selection, and resolution-independent scaling on retina displays.',
-    keyCode: `// Inside paint event handler (ONLY safe place)\ngl.texElementImage2D(\n  gl.TEXTURE_2D, 0,\n  gl.RGBA, gl.RGBA,\n  gl.UNSIGNED_BYTE, pageElement\n);`,
-  },
   slideshow: {
     title: 'Cinematic Slideshow',
     description: 'Full-screen photos with cinematic GLSL transitions — film burns, rack focus pulls, and luminance dissolves between slides.',
@@ -44,18 +37,11 @@ export const LEARN_CONTENT: Record<ModeName, LearnContent> = {
     whyHiC: 'Three things CSS cannot do: (1) compositing live HTML onto a background texture with per-pixel blending in a shader, (2) per-pixel lighting that varies brightness <em>within</em> a single element — CSS <code>brightness()</code> is uniform across the entire element, and (3) light spill that crosses element boundaries, where overhead light illuminating a photo also brightens the wall texture below it. All three require shader access to the composite HTML pixels.',
     keyCode: `// Gallery lighting with procedural wall texture\nvec3 wallColor = vec3(0.045, 0.043, 0.05) + noise;\nvec3 composited = mix(wallColor, htmlColor, isContent);\nfloat lighting = hCenter * (1.0 / (1.0 + lightDist * lightDist * 40.0));\ncomposited *= ambient + lighting * 0.85;`,
   },
-  'stacked-prints': {
-    title: 'Stacked Prints',
-    description: 'A pile of prints you toss aside — paper warps and flexes from the grab point as you interact.',
-    howItWorks: 'Each print\'s HTML (photo, caption, EXIF) is captured as a texture and mapped onto a 30x25 tessellated quad. When tossed, the paper-warp shader displaces UV coordinates radially from the grab point using a sine wave, creating a natural paper-curl effect. The lift amount follows a sine arc (rises then falls) during the toss animation. Paper texture noise, depth-based shadow, and warm color tint complete the physical appearance.',
-    whyHiC: 'CSS transforms are affine — <code>rotate</code>, <code>scale</code>, <code>skew</code> all transform the element as a rigid plane. They cannot bend or curl <em>within</em> a single element. The paper warp is non-linear deformation: one corner lifts while the center stays flat, and the deformation follows a sine curve from the grab point. Achieving this on live HTML content (not a pre-rendered image) requires capturing the DOM as a texture and warping it on a tessellated mesh.',
-    keyCode: `// Paper warp: sine-wave UV displacement from grab point\nfloat dist = distance(uv, u_grabPoint);\nfloat warp = sin(dist * 3.14159) * u_liftAmount * 0.08;\nvec2 dir = normalize(uv - u_grabPoint + 0.001);\nuv += dir * warp;`,
-  },
-  collage: {
-    title: 'Collage',
-    description: 'An editorial collage of overlapping, rotated photos rendered through a tilt-shift miniature effect.',
-    howItWorks: 'The collage layout (overlapping, randomly rotated photos with captions) is captured as one composite texture. The tilt-shift shader applies a horizontal band of sharpness centered at <code>u_focusY</code> with progressive 13-tap Poisson disc blur above and below. The blur radius increases with distance from the focus band via smoothstep. A subtle brightness boost in the focus band and a vignette complete the miniature-photography look.',
-    whyHiC: 'CSS <code>filter: blur()</code> applies uniformly to an entire element. A photo that spans the tilt-shift focus boundary must be sharp in its center and blurred at its edges — <em>within the same element</em>. Additionally, the blur crosses overlapping photos and their caption text seamlessly, because the shader operates on one composite texture containing all the overlapping elements. No combination of CSS filters can achieve spatially-varying blur within a single element.',
-    keyCode: `// Tilt-shift: blur radius varies with distance from focus band\nfloat dist = abs(v_uv.y - u_focusY);\nfloat blurRadius = smoothstep(0.0, 0.3, dist) * u_blurStrength;\nvec4 color = discBlur(u_tex, v_uv, blurRadius, texelSize);\nfloat focusBright = 1.0 + (1.0 - smoothstep(0.0, 0.15, dist)) * 0.08;`,
+  'gallery-walk': {
+    title: '3D Gallery Walk',
+    description: 'A first-person museum walk through a figure-8 floor plan. Photos hang on classical walls with ornate frames and warm spotlighting. Explore freely with WASD + mouse look.',
+    howItWorks: 'Three.js renders a 3D museum scene using the shell\'s canvas. Each photo, plaque, kiosk, and info panel is a live DOM element inside the canvas subtree, captured as a WebGL texture via texElementImage2D in the paint handler. These textures are injected into Three.js materials using the __webglTexture property bridge. The camera is a PerspectiveCamera at eye height (1.6m) driven by pointer lock mouse input and WASD keys, with AABB collision detection against axis-aligned walls.',
+    whyHiC: 'This mode requires all four HiC pillars simultaneously: (1) full CSS text and layout fidelity for museum plaques with serif fonts and EXIF data, (2) 3D rendering via Three.js materials receiving live HTML textures, (3) preserved interactivity — buttons on the detail panel, scrolling on the info panel, and clickable elements on the kiosk map all work through screen-projection passthrough that translates 3D raycaster hits back to DOM coordinates, and (4) real browser affordances including keyboard focus, text selection, and accessibility tree integration via the inert attribute on off-screen photos.',
+    keyCode: `// Inject HiC texture into Three.js material\nconst texture = new THREE.Texture();\ntexture.isRenderTargetTexture = true;\ntexture.colorSpace = THREE.SRGBColorSpace;\ntexture.flipY = false;\nrenderer.properties.get(texture).__webglTexture = glTex;\n// Upload in paint handler, reset Three.js state\ngl.texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, el);\nrenderer.state.reset();`,
   },
 };

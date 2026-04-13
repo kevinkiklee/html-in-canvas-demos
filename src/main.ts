@@ -51,7 +51,7 @@ const container = document.getElementById('canvas-container')!;
 const shell = new Shell(container);
 
 let currentMode: ModeImpl | null = null;
-let currentModeName: ModeName = 'album';
+let currentModeName: ModeName | null = null;
 let switching = false;
 
 // Modes are dynamically imported so each mode's shader GLSL, HTML templates,
@@ -59,17 +59,74 @@ let switching = false;
 // mode they're viewing — important because each mode includes 1-3 GLSL shaders
 // that would bloat the initial bundle if statically imported.
 const modeLoaders: Record<ModeName, () => Promise<{ default: (ctx: ModeContext) => ModeImpl }>> = {
-  album: () => import('./modes/album/album'),
   slideshow: () => import('./modes/slideshow/slideshow'),
   'print-table': () => import('./modes/print-table/print-table'),
   'film-strip': () => import('./modes/film-strip/film-strip'),
   'wall-exhibition': () => import('./modes/wall-exhibition/wall-exhibition'),
-  'stacked-prints': () => import('./modes/stacked-prints/stacked-prints'),
-  collage: () => import('./modes/collage/collage'),
+  'gallery-walk': () => import('./modes/gallery-walk/gallery-walk'),
 };
 
 function openDetail(photoIndex: number): void {
   detail.open(photos, photoIndex);
+}
+
+// --- Landing page (shown before any mode is selected) ---
+function createLandingPage(): void {
+  const root = shell.createModeRoot();
+  root.style.cssText = 'width: 100%; height: 100%; overflow: hidden;';
+
+  const landing = document.createElement('div');
+  landing.id = 'landing';
+  landing.style.cssText = `
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: #0a0a0b;
+    padding: 2rem;
+    text-align: center;
+  `;
+
+  const heading = document.createElement('h1');
+  heading.style.cssText = `
+    font-family: 'Playfair Display', Georgia, serif;
+    font-style: italic;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    color: #e8e4df;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  `;
+  heading.textContent = 'Photography Portfolio';
+
+  const divider = document.createElement('div');
+  divider.style.cssText = `
+    width: 60px; height: 1px;
+    background: linear-gradient(90deg, transparent, #5a5650, transparent);
+    margin-bottom: 2.5rem;
+  `;
+
+  const desc = document.createElement('p');
+  desc.style.cssText = `
+    font-family: Inter, system-ui, sans-serif;
+    font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+    color: #6a6660;
+    max-width: 480px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+  `;
+  desc.textContent = 'A portfolio rendered through custom WebGL2 shaders on live HTML — powered by the experimental HTML-in-Canvas API. Choose a viewing mode above to explore.';
+
+  const hint = document.createElement('p');
+  hint.style.cssText = `
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: #4a4640;
+    letter-spacing: 0.05em;
+  `;
+  hint.textContent = 'Press 1–5 or select a mode from the navigation bar';
+
+  landing.append(heading, divider, desc, hint);
+  root.appendChild(landing);
+  shell.requestPaint();
 }
 
 async function switchMode(name: ModeName): Promise<void> {
@@ -119,6 +176,13 @@ async function switchMode(name: ModeName): Promise<void> {
 
     nav.setActiveMode(name);
     learn.setMode(name);
+
+    // Restore learn drawer on first mode switch (hidden during landing page)
+    const drawer = document.getElementById('learn-drawer')!;
+    if (localStorage.getItem('learn-drawer') !== 'closed') {
+      drawer.classList.remove('drawer-closed');
+      drawer.classList.add('drawer-open');
+    }
   };
 
   // NOTE: View Transitions API is intentionally NOT used here. It conflicts
@@ -190,5 +254,8 @@ window.addEventListener('resize', () => {
   });
 });
 
-// --- Boot default mode ---
-switchMode('album');
+// --- Boot landing page (learn panel hidden until a mode is selected) ---
+const learnEl = document.getElementById('learn-drawer')!;
+learnEl.classList.remove('drawer-open');
+learnEl.classList.add('drawer-closed');
+createLandingPage();

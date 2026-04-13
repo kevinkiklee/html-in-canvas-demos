@@ -2,19 +2,17 @@ import { describe, it, expect } from 'vitest';
 import { MODE_ORDER, MODE_LABELS, type ModeName } from './types';
 
 describe('MODE_ORDER', () => {
-  it('has exactly 7 entries', () => {
-    expect(MODE_ORDER).toHaveLength(7);
+  it('has exactly 5 entries', () => {
+    expect(MODE_ORDER).toHaveLength(5);
   });
 
   it('contains the expected mode names', () => {
     const expected: ModeName[] = [
-      'album',
       'slideshow',
       'print-table',
       'film-strip',
       'wall-exhibition',
-      'stacked-prints',
-      'collage',
+      'gallery-walk',
     ];
     expect(MODE_ORDER).toEqual(expected);
   });
@@ -44,12 +42,10 @@ describe('MODE_LABELS', () => {
   });
 
   it('has labels for each specific mode', () => {
-    expect(MODE_LABELS['album']).toBe('Album');
     expect(MODE_LABELS['slideshow']).toBe('Slideshow');
     expect(MODE_LABELS['print-table']).toBe('Prints');
     expect(MODE_LABELS['film-strip']).toBe('Strip');
     expect(MODE_LABELS['wall-exhibition']).toBe('Wall');
-    expect(MODE_LABELS['stacked-prints']).toBe('Stack');
-    expect(MODE_LABELS['collage']).toBe('Collage');
+    expect(MODE_LABELS['gallery-walk']).toBe('Gallery');
   });
 });

@@ -9,8 +9,8 @@ describe('LEARN_CONTENT', () => {
     }
   });
 
-  it('has exactly 7 entries (one per mode)', () => {
-    expect(Object.keys(LEARN_CONTENT)).toHaveLength(7);
+  it('has exactly 5 entries (one per mode)', () => {
+    expect(Object.keys(LEARN_CONTENT)).toHaveLength(5);
   });
 
   it('has no extra keys beyond the known modes', () => {
