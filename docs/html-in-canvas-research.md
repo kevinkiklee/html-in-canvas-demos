@@ -835,6 +835,8 @@ Every trap discovered during development, with workarounds. Organized by severit
 3. **`display: contents` on subtree root** — throws. Wrap in a concrete `<div>`, not a Fragment.
 4. **Three.js state cache after `texElementImage2D`** — Three's internal GL state desyncs. Call `renderer.state.reset()` after upload, OR inject your own GL texture: `renderer.properties.get(texture).__webglTexture = glTexture` and set `texture.isRenderTargetTexture = true`.
 5. **Shader compile failure with no error check** — renders blank forever. Always check compile/link status synchronously.
+5a. **`overflow:auto/scroll` on texture capture element** — crashes GPU process. Use `overflow: hidden` on the element passed to `texElementImage2D`; nest a scrollable child inside (see gotcha #28).
+5b. **Multiple `paint` listeners on same canvas** — crashes GPU process during content transitions. Use exactly one listener with a callback pattern (see gotcha #29).
 
 ### Will Produce Wrong Results
 
@@ -867,10 +869,34 @@ Every trap discovered during development, with workarounds. Organized by severit
 26. **Shell's RAF guard must account for mode-managed trackers** — if the shell's `draw()` gates on `this.tracker.hasFirstPaint()`, it will sleep forever after a mode switch because `clearCanvas()` resets the shell's tracker. Modes that use their own PaintTracker bypass the shell's tracker entirely. The guard should only apply when no mode hook is set.
 27. **Vite `?raw` imports have no `#include` mechanism** — GLSL utility functions (srgbToLinear, hash21, etc.) cannot be shared via `#include`. Each `.frag` file must inline the functions it needs. Maintain a `common.glsl` reference file and keep inlined copies in sync manually.
 
+### Discovered During Implementation (2026-04-13)
+
+28. **`texElementImage2D` crashes on elements with `overflow:auto` or `overflow:scroll`** — calling `texElementImage2D` on a canvas direct child that has scrollable overflow (not `hidden`) crashes the GPU process (Error code: 11). This appears to be a Chrome bug in the experimental API — possibly related to how the compositor snapshots scrollable content. **Workaround:** use a two-layer DOM structure. The root element (direct child of canvas, the texture capture target) must have `overflow: hidden`. Put a nested child div inside with `overflow-y: auto` (or `overflow-x: auto`) for actual scrolling. The texture captures the root's rendered pixels, which correctly include the visible portion of the scrolled child content.
+    ```html
+    <canvas layoutsubtree>
+      <div id="root" style="overflow: hidden; width: 100%; height: 100%;">
+        <div style="overflow-y: auto; width: 100%; height: 100%;">
+          <!-- scrollable content here -->
+        </div>
+      </div>
+    </canvas>
+    ```
+29. **Multiple `paint` event listeners on the same canvas crash the GPU process** — registering more than one `paint` event listener on a `<canvas layoutsubtree>` causes GPU crashes (Error code: 11) when switching between content configurations (e.g., mode switches in a multi-mode app). The experimental API does not reliably dispatch paint events to multiple listeners. **Workaround:** maintain exactly ONE paint listener on the canvas. If different modules need custom paint processing, use a callback pattern: the single listener calls a registered callback that modules can swap.
+    ```ts
+    // Shell: single paint listener
+    let paintCallback: ((els: readonly Element[]) => void) | null = null;
+    canvas.addEventListener('paint', (e) => {
+      paintCallback?.(e.changedElements);
+    });
+    // Modules register/clear their callback:
+    paintCallback = (changedElements) => { /* upload textures */ };
+    paintCallback = null; // clear before destroying module
+    ```
+
 ### May Break in Future Canary Builds
 
-28. **Feature-detect both `canvas.requestPaint` AND `gl.texElementImage2D`** — Canary builds have broken individually.
-29. **Demos may break without warning** — the spec is actively churning. Issues #108/#109 broke working demos around 2026-04-07/08.
+30. **Feature-detect both `canvas.requestPaint` AND `gl.texElementImage2D`** — Canary builds have broken individually.
+31. **Demos may break without warning** — the spec is actively churning. Issues #108/#109 broke working demos around 2026-04-07/08.
 
 ---
 

@@ -38,7 +38,8 @@ A photography portfolio rendered entirely inside a single `<canvas layoutsubtree
 
 - **Single canvas root:** One `<canvas layoutsubtree>` owns the WebGL2 context, the `paint` event listener, and the RAF loop. Modes never create their own context or loop.
 - **Shell + Mode pattern:** `src/shell.ts` manages the render loop and exposes hooks (`setModeHook`, `setOverlayHook`, `requestDraw`, `setAnimating`). Each mode implements `ModeImpl` (paint, destroy, optional event handlers).
-- **Two PaintTracker patterns:** Modes with a single root div (print-table, film-strip, wall-exhibition, collage) use `PaintTracker`. Modes with dual textures (album, slideshow, stacked-prints) manage textures manually.
+- **Two PaintTracker patterns:** Modes with a single root div (print-table, film-strip, wall-exhibition, collage) use `PaintTracker`. Modes with dual textures (album, slideshow, stacked-prints) manage textures manually via `safeTexUpload()`.
+- **Single paint listener:** Only ONE `paint` event listener exists on the canvas (in the shell). Modes register a callback via `ctx.setModePaint()` instead of adding their own listener. This prevents GPU crashes from the experimental API mishandling multiple concurrent paint handlers.
 - **Dirty-flag RAF loop:** Event-driven, not continuous. Runs only when paint fires, a mode requests a frame, or a mode declares itself animating.
 - **Code splitting:** Each mode is a dynamic `import()`, loaded only when activated. Shaders ship with their mode chunk.
 
@@ -56,7 +57,9 @@ These come from observed crashes and silent failures during implementation, not 
 8. **All assets must be same-origin or CORS-whitelisted.** Cross-origin content silently becomes transparent with no error.
 9. **Avoid `backdrop-filter` and `mix-blend-mode`** on subtree children — ignored or doubled. Implement in shaders instead.
 10. **GLSL `common.glsl` is a reference file only.** Vite's `?raw` import has no `#include` mechanism. Each `.frag` file must inline the functions it needs (srgbToLinear, etc.). Keep inlined copies in sync with `common.glsl`.
-11. **Modes that manage their own PaintTracker must clean up in destroy().** Remove paint event listeners, dispose tracker, delete textures, stop animations, remove DOM elements. Failing to remove paint listeners causes stale `texElementImage2D` calls after mode switch → GPU crash.
+11. **Modes must clean up fully in destroy().** Clear paint callback (`ctx.setModePaint(null)`), dispose tracker, delete textures, stop animations, remove DOM elements. Stale paint callbacks cause `texElementImage2D` calls on removed elements → GPU crash.
+12. **Only ONE paint listener on the canvas.** The shell owns the single `paint` event listener. Modes register a callback via `ctx.setModePaint()` — never call `canvas.addEventListener('paint', ...)` directly. Chrome's experimental HiC API crashes the GPU process (Error code: 11) when multiple paint listeners coexist on the same canvas during mode switches.
+13. **Never use `overflow:auto` or `overflow:scroll` on elements passed to `texElementImage2D`.** This crashes the GPU process (Error code: 11). Use a two-layer structure: the root (texture capture target) has `overflow: hidden`, and a nested child div has `overflow-y: auto` for scrolling. The texture still captures the visible scrolled content correctly.
 
 ## File Structure
 
