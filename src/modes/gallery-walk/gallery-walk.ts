@@ -14,11 +14,20 @@ const PROXIMITY_INTERVAL = 200;
 const RAYCASTER_INTERVAL = 100;
 const KIOSK_UPDATE_INTERVAL = 500;
 
+function shuffle<T>(arr: T[]): T[] {
+  const out = [...arr];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
 export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
   const { gl, canvas, photos: allPhotos, size, dpr, requestDraw, setAnimating } = ctx;
 
-  // Randomize and select 18 photos
-  const photos = allPhotos.slice(0, 18);
+  // Randomize and select 18 photos (re-shuffle on each mode entry)
+  const photos = shuffle(allPhotos).slice(0, 18);
 
   // --- Three.js setup ---
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
@@ -121,7 +130,10 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
   enterOverlay.innerHTML = '<h2>Gallery Walk</h2><p>Click to explore \u00B7 WASD to move \u00B7 Mouse to look</p><p style="margin-top:0.5rem;font-size:0.75rem;color:#5a5650;">Requires keyboard and mouse</p>';
   document.body.appendChild(enterOverlay);
 
+  let started = false;
   enterOverlay.addEventListener('click', () => {
+    if (started) return;
+    started = true;
     enterOverlay.remove();
     controls.lockPointer();
     setAnimating(true);
@@ -141,33 +153,29 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
   let loadRadius = 5; // Start uploading photos within 5m
   const maxLoadRadius = LOD_RADIUS;
 
-  // --- Event handlers ---
-  function onKeydown(e: KeyboardEvent) {
-    controls.onKeydown(e);
+  // --- Track mode active state for event guard ---
+  let destroyed = false;
 
-    if (e.code === 'KeyE') {
-      if (interaction.state === 'walking') {
-        const result = interaction.interact();
-        if (result) {
-          controls.unlockPointer();
-          if (result.type === 'photo' && result.index != null) {
-            hic.setDetailPhoto(photos[result.index]);
-            const detailDom = hic.getDetailDom();
-            detailDom.style.display = 'block';
-            gallery.detailPanelMesh.visible = true;
-            (gallery.detailPanelMesh.material as THREE.MeshBasicMaterial).visible = true;
-            requestAnimationFrame(() => canvas.requestPaint?.());
-          }
-          crosshair.style.display = 'none';
-          prompt.style.display = 'none';
-        }
-      } else {
-        dismissInteraction();
-      }
-    }
+  // --- Interaction helpers ---
+  function enterInteraction(type: 'photo' | 'kiosk' | 'info', photoIndex?: number) {
+    controls.unlockPointer();
+    crosshair.style.display = 'none';
+    prompt.style.display = 'none';
 
-    if (e.code === 'Escape' && interaction.state !== 'walking') {
-      dismissInteraction();
+    if (type === 'photo' && photoIndex != null) {
+      hic.setDetailPhoto(photos[photoIndex]);
+      const detailDom = hic.getDetailDom();
+      detailDom.style.display = 'block';
+      detailDom.style.pointerEvents = 'auto';
+      gallery.detailPanelMesh.visible = true;
+      (gallery.detailPanelMesh.material as THREE.MeshBasicMaterial).visible = true;
+      requestAnimationFrame(() => canvas.requestPaint?.());
+    } else if (type === 'kiosk') {
+      const kioskEntry = hic.entries.get('kiosk');
+      if (kioskEntry) kioskEntry.dom.style.pointerEvents = 'auto';
+    } else if (type === 'info') {
+      const infoEntry = hic.entries.get('info-panel');
+      if (infoEntry) infoEntry.dom.style.pointerEvents = 'auto';
     }
   }
 
@@ -186,11 +194,34 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
     }
   }
 
+  // --- Event handlers (registered on document, guarded by destroyed flag) ---
+  function onKeydown(e: KeyboardEvent) {
+    if (destroyed) return;
+    controls.onKeydown(e);
+
+    if (e.code === 'KeyE') {
+      if (interaction.state === 'walking') {
+        const result = interaction.interact();
+        if (result) {
+          enterInteraction(result.type, result.index);
+        }
+      } else {
+        dismissInteraction();
+      }
+    }
+
+    if (e.code === 'Escape' && interaction.state !== 'walking') {
+      dismissInteraction();
+    }
+  }
+
   function onKeyup(e: KeyboardEvent) {
+    if (destroyed) return;
     controls.onKeyup(e);
   }
 
   function onMouseMove(e: MouseEvent) {
+    if (destroyed) return;
     controls.onMouseMove(e);
   }
 
@@ -227,8 +258,8 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
           }
         }
 
-        // Accessibility: set inert on distant photos
-        const inLOD = interaction.getProximityPhotos(gallery.camera, LOD_RADIUS);
+        // Set inert on photos outside the current load radius (staggered on startup)
+        const inLOD = interaction.getProximityPhotos(gallery.camera, loadRadius);
         for (let i = 0; i < photos.length; i++) {
           hic.setInert(i, !inLOD.has(i));
         }
@@ -277,6 +308,8 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
     },
 
     destroy() {
+      destroyed = true;
+
       // 1. Pointer events
       for (const [_id, entry] of hic.entries) {
         entry.dom.style.pointerEvents = 'none';
@@ -294,7 +327,7 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
       document.removeEventListener('keyup', onKeyup);
       document.removeEventListener('mousemove', onMouseMove);
 
-      // 5. Dispose Three.js objects
+      // 5. Dispose Three.js objects (geometries, materials, textures)
       for (const d of gallery.disposables) {
         d.dispose();
       }
@@ -311,8 +344,8 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
       prompt.remove();
       if (enterOverlay.parentNode) enterOverlay.remove();
 
-      // 9. Dispose renderer (may invalidate GL context — spike item)
-      renderer.dispose();
+      // 9. Skip renderer.dispose() — it calls loseContext() which invalidates
+      // the shared GL context. Three.js objects are already disposed above.
 
       // 10. Stop animation
       setAnimating(false);

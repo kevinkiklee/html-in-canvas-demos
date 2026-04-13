@@ -10,13 +10,6 @@ const PASSAGE_D = 4;
 const PASSAGE_H = 3.5;
 const MOLDING_SIZE = 0.12;
 
-// Material palette — classical museum
-const wallMat = new THREE.MeshStandardMaterial({ color: 0x3d342b, roughness: 0.8 });
-const moldingMat = new THREE.MeshStandardMaterial({ color: 0x5a4f42, roughness: 0.8 });
-const floorMat = new THREE.MeshStandardMaterial({ color: 0x2d2620, roughness: 0.6 });
-const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d0, roughness: 0.9 });
-const frameMat = new THREE.MeshStandardMaterial({ color: 0xb8960c, roughness: 0.35, metalness: 0.7 });
-
 export interface PhotoSlot {
   /** World position of the photo center */
   position: THREE.Vector3;
@@ -58,6 +51,12 @@ export interface GalleryScene {
 export const EX_OFF = ROOM_W + PASSAGE_W;
 
 export function createGalleryScene(aspect: number): GalleryScene {
+  // Materials created per-invocation to survive mode re-entry after dispose
+  const wallMat = new THREE.MeshStandardMaterial({ color: 0x3d342b, roughness: 0.8 });
+  const floorMat = new THREE.MeshStandardMaterial({ color: 0x2d2620, roughness: 0.6 });
+  const ceilingMat = new THREE.MeshStandardMaterial({ color: 0xe8e0d0, roughness: 0.9 });
+  const frameMat = new THREE.MeshStandardMaterial({ color: 0xb8960c, roughness: 0.35, metalness: 0.7 });
+
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x0a0a0b);
 
@@ -67,7 +66,7 @@ export function createGalleryScene(aspect: number): GalleryScene {
   camera.rotation.order = 'YXZ';
 
   const disposables: Array<{ dispose(): void }> = [
-    wallMat, moldingMat, floorMat, ceilingMat, frameMat,
+    wallMat, floorMat, ceilingMat, frameMat,
   ];
 
   const wallColliders: GalleryScene['wallColliders'] = [];
@@ -76,7 +75,6 @@ export function createGalleryScene(aspect: number): GalleryScene {
   function addWall(
     x: number, z: number,
     w: number, h: number, d: number,
-    _rotY = 0,
   ): THREE.Mesh {
     const geo = new THREE.BoxGeometry(w, h, d);
     const mesh = new THREE.Mesh(geo, wallMat);
@@ -271,9 +269,9 @@ export function createGalleryScene(aspect: number): GalleryScene {
     scene.add(frameMeshObj);
     disposables.push(frameGeo);
 
-    // SpotLight aimed at photo
+    // SpotLight aimed at photo — offset 0.5m into room along photo normal
     const spot = new THREE.SpotLight(0xfff0d0, 2.0, 8, Math.PI / 6, 0.5);
-    spot.position.set(cx, ROOM_H - 0.5, cz + normalZ * 0.5);
+    spot.position.set(cx + normalX * 0.5, ROOM_H - 0.5, cz + normalZ * 0.5);
     spot.target = photoMesh;
     spot.castShadow = false;
     scene.add(spot);
@@ -324,10 +322,9 @@ export function createGalleryScene(aspect: number): GalleryScene {
   addPhotoSlot(exOff, photoY, enWallZ, 0, 1, 1.5, 1.0);  // hero
   addPhotoSlot(exOff + 3, photoY, enWallZ, 0, 1, 0.9, 0.7);
 
-  // South wall: 3 photos
+  // South wall: 2 photos (symmetric with west wing)
   const esWallZ = ezCenter + ROOM_D / 2 - WALL_THICKNESS / 2;
   addPhotoSlot(exOff - 3, photoY, esWallZ, 0, -1, 0.9, 0.7);
-  addPhotoSlot(exOff, photoY, esWallZ, 0, -1, 1.0, 0.8);
   addPhotoSlot(exOff + 3, photoY, esWallZ, 0, -1, 0.8, 0.6);
 
   // East wall: 2 photos

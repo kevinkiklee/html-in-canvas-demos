@@ -111,8 +111,9 @@ export function createKioskDom(
     }
     const svgY = 10 + ((worldZ + ROOM_D / 2) / ROOM_D) * 100;
 
-    dot.setAttribute('cx', String(Math.max(10, Math.min(290, svgX))));
-    dot.setAttribute('cy', String(Math.max(10, Math.min(110, svgY))));
+    // Use style properties (not setAttribute) so CSS transitions fire
+    (dot.style as any).cx = `${Math.max(10, Math.min(290, svgX))}px`;
+    (dot.style as any).cy = `${Math.max(10, Math.min(110, svgY))}px`;
   }
 
   return { dom, updatePosition };

@@ -22,6 +22,12 @@ export interface Controls {
   dispose(): void;
 }
 
+// Reusable objects to avoid per-frame allocations
+const _forward = new THREE.Vector3();
+const _right = new THREE.Vector3();
+const _yAxis = new THREE.Vector3(0, 1, 0);
+const _quat = new THREE.Quaternion();
+
 export function createControls(
   camera: THREE.PerspectiveCamera,
   canvas: HTMLCanvasElement,
@@ -87,14 +93,11 @@ export function createControls(
     // Apply rotation
     camera.rotation.set(pitch, yaw, 0, 'YXZ');
 
-    // Movement direction in XZ plane
+    // Movement direction in XZ plane (reuse objects to avoid GC pressure)
     const speed = keys.has('ShiftLeft') || keys.has('ShiftRight') ? SPRINT_SPEED : MOVE_SPEED;
-    const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(
-      new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw),
-    );
-    const right = new THREE.Vector3(1, 0, 0).applyQuaternion(
-      new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), yaw),
-    );
+    _quat.setFromAxisAngle(_yAxis, yaw);
+    const forward = _forward.set(0, 0, -1).applyQuaternion(_quat);
+    const right = _right.set(1, 0, 0).applyQuaternion(_quat);
 
     let dx = 0;
     let dz = 0;

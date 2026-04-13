@@ -21,13 +21,6 @@ export interface InteractionSystem {
   dismiss(): void;
   /** Get photo indices within proximity for plaque reveal */
   getProximityPhotos(camera: THREE.PerspectiveCamera, radius: number): Set<number>;
-  /** Project a mesh to screen coords for CSS passthrough */
-  projectToScreen(
-    mesh: THREE.Mesh,
-    camera: THREE.PerspectiveCamera,
-    canvasWidth: number,
-    canvasHeight: number,
-  ): { x: number; y: number; scaleX: number; scaleY: number } | null;
   dispose(): void;
 }
 
@@ -101,49 +94,6 @@ export function createInteractionSystem(
     return near;
   }
 
-  function projectToScreen(
-    mesh: THREE.Mesh,
-    camera: THREE.PerspectiveCamera,
-    canvasWidth: number,
-    canvasHeight: number,
-  ): { x: number; y: number; scaleX: number; scaleY: number } | null {
-    // Get mesh world position
-    const pos = new THREE.Vector3();
-    mesh.getWorldPosition(pos);
-
-    // Project to NDC
-    const ndc = pos.clone().project(camera);
-    if (ndc.z < 0 || ndc.z > 1) return null; // behind camera or too far
-
-    // NDC to screen
-    const x = (ndc.x * 0.5 + 0.5) * canvasWidth;
-    const y = (-ndc.y * 0.5 + 0.5) * canvasHeight;
-
-    // Approximate scale from mesh size and camera distance
-    const dist = camera.position.distanceTo(pos);
-    if (dist < 0.1) return null;
-
-    const geo = mesh.geometry;
-    geo.computeBoundingBox();
-    const box = geo.boundingBox!;
-    const meshW = box.max.x - box.min.x;
-    const meshH = box.max.y - box.min.y;
-
-    // Pixels per meter at this distance (approximate)
-    const vFov = camera.fov * (Math.PI / 180);
-    const pixelsPerMeter = canvasHeight / (2 * dist * Math.tan(vFov / 2));
-
-    const screenW = meshW * pixelsPerMeter;
-    const screenH = meshH * pixelsPerMeter;
-
-    return {
-      x: x - screenW / 2,
-      y: y - screenH / 2,
-      scaleX: screenW / canvasWidth,
-      scaleY: screenH / canvasHeight,
-    };
-  }
-
   function dispose() {
     // No persistent resources to clean
   }
@@ -156,7 +106,6 @@ export function createInteractionSystem(
     interact,
     dismiss,
     getProximityPhotos,
-    projectToScreen,
     dispose,
   };
 }

@@ -25,6 +25,8 @@ export interface HiCBridge {
   getDetailDom(): HTMLElement;
   /** Update detail panel content for a specific photo */
   setDetailPhoto(photo: Photo): void;
+  /** Current detail photo index (-1 if none) */
+  detailIndex: number;
   dispose(): void;
 }
 
@@ -129,6 +131,37 @@ export function createHiCBridge(
   nextBtn.textContent = 'Next \u2192';
   detailNav.append(prevBtn, nextBtn);
 
+  let detailIndex = -1;
+
+  function updateDetailFromIndex() {
+    if (detailIndex < 0 || detailIndex >= photos.length) return;
+    const photo = photos[detailIndex];
+    detailImg.src = photo.full || photo.medium;
+    detailTitle.textContent = photo.title || `Photograph ${detailIndex + 1}`;
+    detailDesc.textContent = photo.description || '';
+    detailExif.textContent = formatExif(photo);
+    detailImg.onload = () => {
+      canvas.requestPaint?.();
+      requestDraw();
+    };
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (detailIndex > 0) {
+      detailIndex--;
+      updateDetailFromIndex();
+      requestAnimationFrame(() => canvas.requestPaint?.());
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (detailIndex < photos.length - 1) {
+      detailIndex++;
+      updateDetailFromIndex();
+      requestAnimationFrame(() => canvas.requestPaint?.());
+    }
+  });
+
   detailDom.append(detailImg, detailTitle, detailDesc, detailExif, detailNav);
   canvas.appendChild(detailDom);
   registerEntry('detail', detailDom);
@@ -196,12 +229,12 @@ export function createHiCBridge(
       (gl as any).texElementImage2D(
         gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, entry.dom,
       );
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
       entry.lastUploadTime = now;
       anyUploaded = true;
     }
 
     if (anyUploaded) {
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
       renderer.state.reset();
     }
     requestDraw();
@@ -249,6 +282,7 @@ export function createHiCBridge(
   }
 
   function setDetailPhoto(photo: Photo) {
+    detailIndex = photos.indexOf(photo);
     detailImg.src = photo.full || photo.medium;
     detailTitle.textContent = photo.title || '';
     detailDesc.textContent = photo.description || '';
@@ -276,6 +310,8 @@ export function createHiCBridge(
     setInert,
     getDetailDom,
     setDetailPhoto,
+    get detailIndex() { return detailIndex; },
+    set detailIndex(v: number) { detailIndex = v; },
     dispose,
   };
 }
