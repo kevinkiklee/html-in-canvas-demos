@@ -70,15 +70,22 @@ function createGridHTML(root: HTMLElement, photos: Photo[]): void {
 export default function createPrintTable(ctx: ModeContext): ModeImpl {
   const { gl, canvas, photos, requestDraw, openDetail } = ctx;
 
+  // Root must have overflow:hidden — texElementImage2D crashes the GPU process
+  // when called on elements with overflow:auto/scroll. The scroller div inside
+  // handles actual scrolling; root is the texture capture target.
   const root = document.createElement('div');
   root.id = 'mode-root';
-  root.style.cssText = 'width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;';
+  root.style.cssText = 'width: 100%; height: 100%; overflow: hidden;';
   canvas.appendChild(root);
+
+  const scroller = document.createElement('div');
+  scroller.style.cssText = 'width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;';
+  root.appendChild(scroller);
 
   const tracker = new PaintTracker(gl);
   tracker.register(root, 'mode-root');
 
-  createGridHTML(root, photos);
+  createGridHTML(scroller, photos);
 
   ctx.setModePaint((changedElements) => {
     tracker.handlePaint(changedElements);
@@ -97,7 +104,7 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
     canvas.requestPaint?.();
     requestDraw();
   };
-  root.addEventListener('scroll', onScroll);
+  scroller.addEventListener('scroll', onScroll);
 
   const mode: ModeImpl = {
     paint(_dt: number) {
@@ -136,7 +143,7 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
 
     destroy() {
       ctx.setModePaint(null);
-      root.removeEventListener('scroll', onScroll);
+      scroller.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();
       root.remove();
