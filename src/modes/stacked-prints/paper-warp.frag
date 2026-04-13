@@ -1,11 +1,11 @@
+#version 300 es
+precision highp float;
 // Paper warp fragment shader — simulates flexible paper being lifted and tossed.
 // Displaces UV coordinates radially from the grab point using a sine wave,
 // creating a natural paper-curl effect. Also adds paper texture noise, a
 // depth-based shadow (darker when lifted higher), and a warm tint.
 // The UV displacement works on the composite HTML texture, so the photo,
 // caption, and EXIF data all warp together as one continuous surface.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;

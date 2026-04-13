@@ -1,3 +1,5 @@
+#version 300 es
+precision highp float;
 // Spotlight fragment shader — cursor-following light on a dark table.
 // Combines three effects that are impossible with CSS on individual elements:
 //   1. Radial brightness falloff from the cursor (smoothstep, not per-element)
@@ -5,8 +7,6 @@
 //   3. Vignette darkening at screen edges
 // All three operate on the composite HTML texture, so blur and light spill
 // cross element boundaries seamlessly — a photo's blur bleeds into its caption.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;

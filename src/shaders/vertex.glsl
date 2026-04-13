@@ -1,10 +1,10 @@
+#version 300 es
+precision highp float;
 // Shared vertex shader for all post-processing and mode shaders.
 // Maps quad vertices from [-1,1] to a destination rectangle in clip space
 // via u_dst, and passes UV coordinates to the fragment shader.
 // Used with both the simple fullscreen quad and tessellated quads (page curl,
 // paper warp) — the tessellated version has more vertices but same attributes.
-#version 300 es
-precision highp float;
 
 layout(location = 0) in vec2 a_pos;
 layout(location = 1) in vec2 a_uv;

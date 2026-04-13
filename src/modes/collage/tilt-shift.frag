@@ -1,3 +1,5 @@
+#version 300 es
+precision highp float;
 // Tilt-shift fragment shader — creates a miniature/diorama effect.
 // Applies a horizontal band of sharpness (centered at u_focusY) with
 // progressive disc blur above and below, simulating a tilt-shift lens.
@@ -5,8 +7,6 @@
 // its center and blurred at its edges — within the same DOM element. CSS
 // blur is uniform per-element and cannot vary spatially within one element.
 // Also adds subtle brightness boost in the focus band and a vignette.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;

@@ -1,3 +1,5 @@
+#version 300 es
+precision highp float;
 // Curvature fragment shader — bends the filmstrip into a 3D-looking surface.
 // Displaces UV coordinates quadratically based on horizontal distance from
 // center, simulating a film strip curving away from the viewer at the edges.
@@ -5,8 +7,6 @@
 // and a subtle center glow (the "sweet spot" where film sits flat on a light
 // table). This is a UV-space effect, not vertex displacement — simpler but
 // effective for a single-axis curve.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;

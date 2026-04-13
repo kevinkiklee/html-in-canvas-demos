@@ -1,10 +1,10 @@
+#version 300 es
+precision highp float;
 // Rack focus transition — simulates a cinema lens pull: the outgoing slide
 // blurs out of focus while the incoming slide racks into focus. Both slides
 // use a 13-tap Poisson disc blur whose radius is driven by u_progress. The
 // blend happens in the middle (0.3–0.7) when both are slightly soft, just
 // like a real focus pull where neither subject is perfectly sharp mid-rack.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;

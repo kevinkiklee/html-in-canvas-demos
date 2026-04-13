@@ -1,10 +1,10 @@
+#version 300 es
+precision highp float;
 // Luminance dissolve transition — pixels transition based on their brightness.
 // Bright areas of the outgoing slide dissolve first, dark areas last. This
 // creates an organic, non-uniform wipe that follows image content rather than
 // a geometric pattern. A subtle glow at the dissolve boundary adds polish.
 // The threshold sweeps from -0.2 to ~1.2 to ensure full coverage.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;

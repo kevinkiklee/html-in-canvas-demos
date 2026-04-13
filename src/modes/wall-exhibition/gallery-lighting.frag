@@ -1,3 +1,5 @@
+#version 300 es
+precision highp float;
 // Gallery lighting fragment shader — simulates overhead spotlights in a museum.
 // Composites the HTML layout onto a procedural wall texture (subtle noise),
 // then applies per-pixel lighting: evenly-spaced overhead spots with
@@ -5,8 +7,6 @@
 // CSS cannot do per-pixel lighting within a single element, and the light
 // spill crosses element boundaries (a photo's light bleeds onto the wall
 // behind and below it). Ambient light provides a base so shadows aren't pure black.
-#version 300 es
-precision highp float;
 
 in vec2 v_uv;
 out vec4 frag_color;
