@@ -9,7 +9,7 @@
  * blur, or luminance-keyed blending — those require custom GLSL.
  */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
-import { getCachedProgram, uniform, createQuadVAO, createElementTexture } from '../../lib/gl';
+import { getCachedProgram, uniform, createQuadVAO, createElementTexture, safeTexUpload } from '../../lib/gl';
 import { loadPhoto, formatExif } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import passthroughSrc from '../../shaders/passthrough.frag?raw';
@@ -70,19 +70,16 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
   const texA = createElementTexture(gl);
   const texB = createElementTexture(gl);
 
+  // safeTexUpload guards against disconnected/zero-size elements that crash the GPU.
   const onPaint = ((e: PaintEvent) => {
     for (const el of e.changedElements) {
       const target = el as HTMLElement;
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       if (target === slideA || target.id === 'slide-a') {
-        gl.bindTexture(gl.TEXTURE_2D, texA);
-        (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, slideA);
+        safeTexUpload(gl, texA, slideA);
       }
       if (target === slideB || target.id === 'slide-b') {
-        gl.bindTexture(gl.TEXTURE_2D, texB);
-        (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, slideB);
+        safeTexUpload(gl, texB, slideB);
       }
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     }
     requestDraw();
   }) as EventListener;

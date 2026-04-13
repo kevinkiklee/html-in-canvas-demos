@@ -8,7 +8,7 @@
  * rotateY flips — curving content along an arbitrary path requires HiC.
  */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
-import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture } from '../../lib/gl';
+import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture, safeTexUpload } from '../../lib/gl';
 import { loadPhoto } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import pageCurlSrc from './page-curl.frag?raw';
@@ -104,18 +104,15 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
 
   // Album manages its own paint handler (not PaintTracker) because it needs
   // two textures — current page and next page — uploaded in the same paint cycle.
+  // safeTexUpload guards against disconnected/zero-size elements that crash the GPU.
   const onPaint = ((e: PaintEvent) => {
     for (const el of e.changedElements) {
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       if (el === pageEl) {
-        gl.bindTexture(gl.TEXTURE_2D, texCurrent);
-        (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, pageEl);
+        safeTexUpload(gl, texCurrent, pageEl);
       }
       if (el === nextPageEl) {
-        gl.bindTexture(gl.TEXTURE_2D, texNext);
-        (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, nextPageEl);
+        safeTexUpload(gl, texNext, nextPageEl);
       }
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
     }
     requestDraw();
   }) as EventListener;

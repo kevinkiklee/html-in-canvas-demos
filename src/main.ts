@@ -87,6 +87,11 @@ async function switchMode(name: ModeName): Promise<void> {
     shell.setAnimating(false);
     shell.clearCanvas();
 
+    // Allow the browser compositor to settle after clearing canvas children.
+    // Without this, the new mode's paint handler can fire before the old
+    // mode's elements are fully detached, crashing the GPU process.
+    await new Promise(r => requestAnimationFrame(r));
+
     const module = await modeLoaders[name]();
     const ctx: ModeContext = {
       gl: shell.gl,

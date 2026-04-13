@@ -9,7 +9,7 @@
  * Non-linear deformation of live DOM content requires HiC + tessellation.
  */
 import type { ModeImpl, ModeContext, Photo } from '../../types';
-import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture } from '../../lib/gl';
+import { getCachedProgram, uniform, createTessellatedQuad, createElementTexture, safeTexUpload } from '../../lib/gl';
 import { loadPhoto, formatExif } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import paperWarpSrc from './paper-warp.frag?raw';
@@ -57,13 +57,11 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
 
   const texFront = createElementTexture(gl);
 
+  // safeTexUpload guards against disconnected/zero-size elements that crash the GPU.
   const onPaint = ((e: PaintEvent) => {
     for (const el of e.changedElements) {
       if (el === frontEl) {
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-        gl.bindTexture(gl.TEXTURE_2D, texFront);
-        (gl as any).texElementImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, frontEl);
-        gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+        safeTexUpload(gl, texFront, frontEl);
       }
     }
     requestDraw();
