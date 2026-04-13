@@ -859,10 +859,18 @@ Every trap discovered during development, with workarounds. Organized by severit
 21. **Text is always grayscale-AA** — slightly thicker than regular DOM text.
 22. **`ElementImage` lifetime is undefined** — re-capture every frame, don't cache across frames.
 
+### Discovered During Implementation (2026-04-12)
+
+23. **`#version 300 es` must be the absolute first line in GLSL shaders** — no comments, no whitespace before it. When importing GLSL via Vite's `?raw` suffix, the file content is used verbatim. Any leading comments before `#version` cause `ERROR: '#' : #version directive must occur on the first line of the shader`. Put doc comments AFTER the `#version` and `precision` declarations.
+24. **View Transitions API crashes the GPU process** — `document.startViewTransition()` captures before/after snapshots of the page. During this capture, the browser can trigger `texElementImage2D` outside the paint handler, causing Chrome Error code: 11 (GPU process crash). Do NOT use View Transitions with HiC canvases. Use instant DOM switches instead.
+25. **Modes managing their own PaintTracker must fully clean up in destroy()** — if a mode adds a `paint` event listener to the canvas but doesn't remove it in `destroy()`, the listener fires after mode switch with stale element references, calling `texElementImage2D` on removed elements → GPU crash.
+26. **Shell's RAF guard must account for mode-managed trackers** — if the shell's `draw()` gates on `this.tracker.hasFirstPaint()`, it will sleep forever after a mode switch because `clearCanvas()` resets the shell's tracker. Modes that use their own PaintTracker bypass the shell's tracker entirely. The guard should only apply when no mode hook is set.
+27. **Vite `?raw` imports have no `#include` mechanism** — GLSL utility functions (srgbToLinear, hash21, etc.) cannot be shared via `#include`. Each `.frag` file must inline the functions it needs. Maintain a `common.glsl` reference file and keep inlined copies in sync manually.
+
 ### May Break in Future Canary Builds
 
-23. **Feature-detect both `canvas.requestPaint` AND `gl.texElementImage2D`** — Canary builds have broken individually.
-24. **Demos may break without warning** — the spec is actively churning. Issues #108/#109 broke working demos around 2026-04-07/08.
+28. **Feature-detect both `canvas.requestPaint` AND `gl.texElementImage2D`** — Canary builds have broken individually.
+29. **Demos may break without warning** — the spec is actively churning. Issues #108/#109 broke working demos around 2026-04-07/08.
 
 ---
 
