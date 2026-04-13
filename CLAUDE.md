@@ -26,7 +26,7 @@ A photography portfolio rendered entirely inside a single `<canvas layoutsubtree
 - `npm run build` — TypeScript check + Vite production build
 - `npm run preview` — Preview production build
 - `npm run manifest` — Process photos: extract EXIF, generate responsive WebP, create `src/photos.json`
-- `npm test` — Run Vitest (154 tests)
+- `npm test` — Run Vitest (146 tests)
 - `npm run test:watch` — Vitest watch mode
 
 ## Assets

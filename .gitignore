@@ -1,5 +1,6 @@
 node_modules/
 dist/
+assets/
 public/photographs/
 .superpowers/
 *.local
