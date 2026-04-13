@@ -14,16 +14,18 @@ import { loadPhoto, formatExif } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import spotlightSrc from './spotlight.frag?raw';
 
-function createGridHTML(root: HTMLElement, photos: Photo[]): void {
-  root.style.cssText = `
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-    padding: 2rem;
-    width: 100%;
-    min-height: 100%;
-    background: #0a0a0b;
-  `;
+function createGridHTML(root: HTMLElement, photos: Photo[], onImageLoad?: () => void): void {
+  // Merge styles instead of overwriting cssText — the caller may have set
+  // layout-critical properties (height, overflow) that must survive.
+  Object.assign(root.style, {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+    gap: '1.5rem',
+    padding: '2rem',
+    width: '100%',
+    minHeight: '100%',
+    background: '#0a0a0b',
+  });
 
   for (let i = 0; i < photos.length; i++) {
     const photo = photos[i];
@@ -33,7 +35,6 @@ function createGridHTML(root: HTMLElement, photos: Photo[]): void {
     card.style.cssText = `cursor: pointer;`;
 
     const img = document.createElement('img');
-    img.loading = 'lazy';
     img.style.cssText = `
       width: 100%;
       aspect-ratio: ${photo.width} / ${photo.height};
@@ -41,7 +42,7 @@ function createGridHTML(root: HTMLElement, photos: Photo[]): void {
       border-radius: 2px;
       background: #141416;
     `;
-    loadPhoto(img, photo, 400);
+    loadPhoto(img, photo, 400, onImageLoad);
 
     const caption = document.createElement('div');
     caption.style.cssText = `
@@ -85,7 +86,11 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
   const tracker = new PaintTracker(gl);
   tracker.register(root, 'mode-root');
 
-  createGridHTML(scroller, photos);
+  const onImageLoad = () => {
+    canvas.requestPaint?.();
+    requestDraw();
+  };
+  createGridHTML(scroller, photos, onImageLoad);
 
   ctx.setModePaint((changedElements) => {
     tracker.handlePaint(changedElements);

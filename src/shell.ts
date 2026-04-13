@@ -53,6 +53,8 @@ export class Shell {
     // switches. All paint processing goes through this single handler. Modes
     // register a callback via setModePaintCallback() instead of adding their own.
     this.canvas.addEventListener('paint', ((e: PaintEvent) => {
+      console.log('[shell] paint event, changedElements:', e.changedElements.length,
+        e.changedElements.map((el: Element) => `${el.tagName}#${(el as HTMLElement).id || '?'}`).slice(0, 5));
       this.tracker.handlePaint(e.changedElements);
       this.modePaintCallback?.(e.changedElements);
       this.dirty = true;

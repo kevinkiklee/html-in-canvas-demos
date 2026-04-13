@@ -14,18 +14,22 @@ import { loadPhoto, formatExif } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import curvatureSrc from './curvature.frag?raw';
 
-const FRAME_WIDTH = 280;
+const FRAME_WIDTH = 340;
+const STRIP_HEIGHT = 420;
+const PHOTO_HEIGHT = 240;
 const SPROCKET_SIZE = 12;
 
-function createStripHTML(root: HTMLElement, photos: Photo[]): void {
-  root.style.cssText = `
+function createStripHTML(scroller: HTMLElement, photos: Photo[], onImageLoad?: () => void): void {
+  const strip = document.createElement('div');
+  strip.style.cssText = `
     display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 2rem 4rem;
-    background: #0a0a0b;
-    gap: 0;
-    white-space: nowrap;
+    align-items: stretch;
+    height: ${STRIP_HEIGHT}px;
+    background: linear-gradient(180deg, #1c1a17, #1e1c18 50%, #1c1a17);
+    border-top: 2px solid #2e2a24;
+    border-bottom: 2px solid #2e2a24;
+    padding: 0 3rem;
+    flex-shrink: 0;
   `;
 
   for (let i = 0; i < photos.length; i++) {
@@ -34,32 +38,35 @@ function createStripHTML(root: HTMLElement, photos: Photo[]): void {
     frame.dataset.index = String(i);
     frame.style.cssText = `
       flex: 0 0 ${FRAME_WIDTH}px;
-      background: #181818;
-      border-left: 2px solid #222;
-      border-right: 2px solid #222;
-      padding: 2rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 12px;
+      border-right: 1px solid #2e2a24;
       position: relative;
       cursor: pointer;
+      box-sizing: border-box;
     `;
 
     for (const pos of ['top', 'bottom'] as const) {
       const sprockets = document.createElement('div');
       sprockets.style.cssText = `
         position: absolute;
-        ${pos}: 6px;
+        ${pos}: 7px;
         left: 0; right: 0;
         display: flex;
         justify-content: space-evenly;
-        padding: 0 1rem;
+        padding: 0 24px;
       `;
-      for (let s = 0; s < 4; s++) {
+      for (let s = 0; s < 5; s++) {
         const hole = document.createElement('div');
         hole.style.cssText = `
           width: ${SPROCKET_SIZE}px;
           height: ${SPROCKET_SIZE}px;
           border-radius: 2px;
-          background: #0a0a0b;
-          border: 1px solid #333;
+          background: #0d0c0a;
+          border: 1px solid #332e28;
         `;
         sprockets.appendChild(hole);
       }
@@ -69,32 +76,33 @@ function createStripHTML(root: HTMLElement, photos: Photo[]): void {
     const frameNum = document.createElement('div');
     frameNum.style.cssText = `
       position: absolute;
-      top: 22px; right: 8px;
+      top: 30px; right: 14px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 9px;
-      color: #444;
+      color: #5a5040;
     `;
     frameNum.textContent = `${i + 1}A`;
     frame.appendChild(frameNum);
 
     const img = document.createElement('img');
-    img.loading = 'lazy';
     img.style.cssText = `
       width: 100%;
-      aspect-ratio: ${photo.width} / ${photo.height};
+      height: ${PHOTO_HEIGHT}px;
       object-fit: cover;
       display: block;
     `;
-    loadPhoto(img, photo, 400);
+    loadPhoto(img, photo, 400, onImageLoad);
     frame.appendChild(img);
 
     const caption = document.createElement('div');
     caption.style.cssText = `
-      margin-top: 0.5rem;
+      margin-top: 6px;
       font-family: Inter, system-ui, sans-serif;
-      font-size: 10px;
-      color: #666;
+      font-size: 9px;
+      color: #706858;
       white-space: normal;
+      text-align: center;
+      line-height: 1.3;
     `;
     caption.textContent = photo.title || '';
 
@@ -102,13 +110,17 @@ function createStripHTML(root: HTMLElement, photos: Photo[]): void {
     exif.className = 'exif-container';
     exif.style.cssText = `
       font-family: 'JetBrains Mono', monospace;
-      font-size: 9px; color: #5a5650;
+      font-size: 8px;
+      color: #5a5040;
+      text-align: center;
     `;
     exif.textContent = formatExif(photo);
 
     frame.append(caption, exif);
-    root.appendChild(frame);
+    strip.appendChild(frame);
   }
+
+  scroller.appendChild(strip);
 }
 
 export default function createFilmStrip(ctx: ModeContext): ModeImpl {
@@ -123,13 +135,17 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
   canvas.appendChild(root);
 
   const scroller = document.createElement('div');
-  scroller.style.cssText = 'width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden;';
+  scroller.style.cssText = 'width: 100%; height: 100%; overflow-x: auto; overflow-y: hidden; display: flex; align-items: center; background: #0a0908; scrollbar-width: none;';
   root.appendChild(scroller);
 
   const tracker = new PaintTracker(gl);
   tracker.register(root, 'mode-root');
 
-  createStripHTML(scroller, photos);
+  const onImageLoad = () => {
+    canvas.requestPaint?.();
+    requestDraw();
+  };
+  createStripHTML(scroller, photos, onImageLoad);
 
   ctx.setModePaint((changedElements) => {
     tracker.handlePaint(changedElements);

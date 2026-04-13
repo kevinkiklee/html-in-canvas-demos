@@ -66,13 +66,13 @@ describe('createNav', () => {
     const onModeSwitch = vi.fn();
     makeNav({ onModeSwitch });
 
-    const albumBtn = navEl.querySelector('[data-mode="album"]') as HTMLButtonElement;
-    albumBtn.click();
-    expect(onModeSwitch).toHaveBeenCalledWith('album');
-
     const slideshowBtn = navEl.querySelector('[data-mode="slideshow"]') as HTMLButtonElement;
     slideshowBtn.click();
     expect(onModeSwitch).toHaveBeenCalledWith('slideshow');
+
+    const stripBtn = navEl.querySelector('[data-mode="film-strip"]') as HTMLButtonElement;
+    stripBtn.click();
+    expect(onModeSwitch).toHaveBeenCalledWith('film-strip');
   });
 
   it('calls onToggleExif when the EXIF button is clicked', () => {
@@ -113,13 +113,13 @@ describe('createNav', () => {
 
     nav.setActiveMode('slideshow');
     const slideshowBtn = navEl.querySelector('[data-mode="slideshow"]') as HTMLButtonElement;
-    const albumBtn = navEl.querySelector('[data-mode="album"]') as HTMLButtonElement;
+    const stripBtn = navEl.querySelector('[data-mode="film-strip"]') as HTMLButtonElement;
     expect(slideshowBtn.classList.contains('active')).toBe(true);
-    expect(albumBtn.classList.contains('active')).toBe(false);
+    expect(stripBtn.classList.contains('active')).toBe(false);
 
-    nav.setActiveMode('album');
+    nav.setActiveMode('film-strip');
     expect(slideshowBtn.classList.contains('active')).toBe(false);
-    expect(albumBtn.classList.contains('active')).toBe(true);
+    expect(stripBtn.classList.contains('active')).toBe(true);
   });
 
   it('setActiveMode only has one active button at a time', () => {

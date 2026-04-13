@@ -19,7 +19,7 @@ import lumDissolveSrc from './luminance-dissolve.frag?raw';
 
 const TRANSITION_DURATION = 1200;
 
-function createSlideHTML(container: HTMLElement, photo: Photo): void {
+function createSlideHTML(container: HTMLElement, photo: Photo, onImageLoad?: () => void): void {
   container.innerHTML = '';
   container.style.cssText = `
     width: 100%; height: 100%;
@@ -30,7 +30,7 @@ function createSlideHTML(container: HTMLElement, photo: Photo): void {
 
   const img = document.createElement('img');
   img.style.cssText = `max-width: 90%; max-height: 75%; object-fit: contain;`;
-  loadPhoto(img, photo, 1600);
+  loadPhoto(img, photo, 1600, onImageLoad);
 
   const info = document.createElement('div');
   info.style.cssText = `margin-top: 1.5rem; text-align: center;`;
@@ -75,11 +75,10 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
   // paint listeners on the canvas (which crashes Chrome's experimental HiC API).
   ctx.setModePaint((changedElements) => {
     for (const el of changedElements) {
-      const target = el as HTMLElement;
-      if (target === slideA || target.id === 'slide-a') {
+      if (el === slideA || slideA.contains(el)) {
         safeTexUpload(gl, texA, slideA);
       }
-      if (target === slideB || target.id === 'slide-b') {
+      if (el === slideB || slideB.contains(el)) {
         safeTexUpload(gl, texB, slideB);
       }
     }
@@ -100,14 +99,18 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
   let transitionProgram: WebGLProgram = shaders[0];
   let currentIsA = true;
 
-  createSlideHTML(slideA, photos[0]);
+  const onImageLoad = () => {
+    canvas.requestPaint?.();
+    requestDraw();
+  };
+  createSlideHTML(slideA, photos[0], onImageLoad);
   canvas.requestPaint?.();
 
   function startTransition(newIndex: number): void {
     if (transitioning || newIndex < 0 || newIndex >= photos.length) return;
     currentIndex = newIndex;
     const target = currentIsA ? slideB : slideA;
-    createSlideHTML(target, photos[currentIndex]);
+    createSlideHTML(target, photos[currentIndex], onImageLoad);
     canvas.requestPaint?.();
     transitionProgram = shaders[Math.floor(Math.random() * shaders.length)];
     transitioning = true;

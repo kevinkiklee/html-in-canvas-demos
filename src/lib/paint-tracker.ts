@@ -40,36 +40,60 @@ export class PaintTracker {
   }
 
   uploadDirect(el: HTMLElement): boolean {
-    // Zero-size elements produce a 0x0 texture upload that crashes some GPU drivers.
-    if (el.offsetWidth <= 0 || el.offsetHeight <= 0) return false;
+    // Guard: element must be in the DOM and have non-zero layout.
+    // Zero-size or disconnected elements crash the GPU process.
+    if (!el.isConnected || el.offsetWidth <= 0 || el.offsetHeight <= 0) {
+      console.warn('[PaintTracker] uploadDirect skipped:', { connected: el.isConnected, w: el.offsetWidth, h: el.offsetHeight });
+      return false;
+    }
 
     for (const entry of this.entries.values()) {
       if (entry.element === el) {
-        this.gl.bindTexture(this.gl.TEXTURE_2D, entry.texture);
-        // UNPACK_FLIP_Y_WEBGL: HTML's coordinate origin is top-left, but GL's
-        // texture origin is bottom-left. Without this flip, every shader would
-        // see the HTML content upside-down.
-        this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
-        // texElementImage2D: the HiC call that captures a DOM element's rendered
-        // pixels directly into a WebGL texture. This MUST only be called inside
-        // the `paint` event handler — calling it elsewhere crashes the GPU process.
-        (this.gl as any).texElementImage2D(
-          this.gl.TEXTURE_2D, 0, this.gl.RGBA,
-          this.gl.RGBA, this.gl.UNSIGNED_BYTE, el,
-        );
-        this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, false);
-        entry.dirty = false;
-        this._dirty = true;
-        this._hasFirstPaint = true;
-        return true;
+        try {
+          this.gl.bindTexture(this.gl.TEXTURE_2D, entry.texture);
+          this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, true);
+          (this.gl as any).texElementImage2D(
+            this.gl.TEXTURE_2D, 0, this.gl.RGBA,
+            this.gl.RGBA, this.gl.UNSIGNED_BYTE, el,
+          );
+          this.gl.pixelStorei(this.gl.UNPACK_FLIP_Y_WEBGL, false);
+          entry.dirty = false;
+          this._dirty = true;
+          this._hasFirstPaint = true;
+          // DEBUG: read back pixels to check texture content
+          const fb = this.gl.createFramebuffer();
+          this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, fb);
+          this.gl.framebufferTexture2D(this.gl.FRAMEBUFFER, this.gl.COLOR_ATTACHMENT0, this.gl.TEXTURE_2D, entry.texture, 0);
+          const px = new Uint8Array(16);
+          this.gl.readPixels(50, 50, 2, 2, this.gl.RGBA, this.gl.UNSIGNED_BYTE, px);
+          const px2 = new Uint8Array(4);
+          this.gl.readPixels(Math.floor(el.offsetWidth / 2), Math.floor(el.offsetHeight / 2), 1, 1, this.gl.RGBA, this.gl.UNSIGNED_BYTE, px2);
+          console.log('[PaintTracker] pixel@(50,50):', Array.from(px.slice(0, 4)), 'pixel@center:', Array.from(px2));
+          this.gl.bindFramebuffer(this.gl.FRAMEBUFFER, null);
+          this.gl.deleteFramebuffer(fb);
+          return true;
+        } catch (e) {
+          console.warn('[PaintTracker] texElementImage2D failed:', e);
+          return false;
+        }
       }
     }
     return false;
   }
 
   handlePaint(changedElements: readonly Element[]): void {
-    for (const el of changedElements) {
-      this.uploadDirect(el as HTMLElement);
+    // HiC paint events report the specific elements that changed (e.g. an <img>
+    // that finished loading), not necessarily the registered root. We need to
+    // re-upload a tracked element whenever it OR any of its descendants changed.
+    for (const [id, entry] of this.entries) {
+      const directMatch = changedElements.some(el => el === entry.element);
+      const descendantMatch = !directMatch && changedElements.some(el => entry.element.contains(el));
+      if (directMatch || descendantMatch) {
+        console.log('[PaintTracker] handlePaint match for', id, { directMatch, descendantMatch });
+        this.uploadDirect(entry.element);
+      } else {
+        console.log('[PaintTracker] handlePaint NO match for', id, 'among', changedElements.length, 'elements');
+      }
     }
   }
 

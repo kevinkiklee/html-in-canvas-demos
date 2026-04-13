@@ -156,3 +156,12 @@ h1, h2, h3 {
   opacity: 1;
   transform: scale(1);
 }
+
+/* Inside the HiC canvas, images must be immediately visible. texElementImage2D
+   captures a single snapshot — CSS transitions are invisible to the shader.
+   The LQIP placeholder shows instantly; the full-res replaces it on load. */
+canvas[layoutsubtree] .photo-img {
+  transition: none;
+  opacity: 1 !important;
+  transform: none !important;
+}

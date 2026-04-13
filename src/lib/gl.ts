@@ -213,6 +213,31 @@ export function createElementTexture(gl: WebGL2RenderingContext): WebGLTexture {
   return texture;
 }
 
+/**
+ * Safe wrapper around texElementImage2D. Guards against disconnected or
+ * zero-size elements that crash the GPU process, and catches any unexpected
+ * errors from the experimental API. MUST only be called inside a paint handler.
+ */
+export function safeTexUpload(
+  gl: WebGL2RenderingContext,
+  texture: WebGLTexture,
+  el: HTMLElement,
+): boolean {
+  if (!el.isConnected || el.offsetWidth <= 0 || el.offsetHeight <= 0) return false;
+  try {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+    (gl as any).texElementImage2D(
+      gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, el,
+    );
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+    return true;
+  } catch (e) {
+    console.warn('[HiC] texElementImage2D failed:', e);
+    return false;
+  }
+}
+
 export function createImageTexture(
   gl: WebGL2RenderingContext,
   url: string,

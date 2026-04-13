@@ -43,7 +43,8 @@
 }
 
 .detail-hidden .detail-backdrop,
-.detail-hidden .detail-content {
+.detail-hidden .detail-content,
+.detail-hidden .detail-nav {
   opacity: 0;
   pointer-events: none;
 }
@@ -99,3 +100,13 @@
 .detail-prev { left: 1rem; }
 .detail-next { right: 1rem; }
 .detail-nav.hidden { display: none; }
+
+/* When learn drawer is open, shrink flex content area so photo centers in visible space.
+   padding-right reduces the flex layout area without moving the backdrop (abspos inset:0
+   references the padding box, so it still covers the full viewport). */
+#learn-drawer.drawer-open ~ #detail-view {
+  padding-right: 340px;
+}
+#learn-drawer.drawer-open ~ #detail-view .detail-next {
+  right: calc(340px + 1rem);
+}

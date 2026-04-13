@@ -88,7 +88,7 @@ describe('createLearnDrawer', () => {
     vi.useFakeTimers();
     const drawer = createLearnDrawer();
 
-    drawer.setMode('album');
+    drawer.setMode('slideshow');
 
     // Content is updated after 150ms timeout
     vi.advanceTimersByTime(200);
@@ -97,9 +97,9 @@ describe('createLearnDrawer', () => {
     const descEl = drawerEl.querySelector('.learn-desc')!;
     const codeEl = drawerEl.querySelector('.learn-code code')!;
 
-    expect(titleEl.textContent).toBe(LEARN_CONTENT.album.title);
-    expect(descEl.textContent).toBe(LEARN_CONTENT.album.description);
-    expect(codeEl.textContent).toBe(LEARN_CONTENT.album.keyCode);
+    expect(titleEl.textContent).toBe(LEARN_CONTENT.slideshow.title);
+    expect(descEl.textContent).toBe(LEARN_CONTENT.slideshow.description);
+    expect(codeEl.textContent).toBe(LEARN_CONTENT.slideshow.keyCode);
 
     vi.useRealTimers();
   });
@@ -109,7 +109,7 @@ describe('createLearnDrawer', () => {
     const drawer = createLearnDrawer();
     const bodyEl = drawerEl.querySelector('.learn-body') as HTMLElement;
 
-    drawer.setMode('collage');
+    drawer.setMode('film-strip');
     expect(bodyEl.style.opacity).toBe('0');
 
     vi.advanceTimersByTime(200);
@@ -122,13 +122,13 @@ describe('createLearnDrawer', () => {
     vi.useFakeTimers();
     const drawer = createLearnDrawer();
 
-    drawer.setMode('album');
+    drawer.setMode('slideshow');
     vi.advanceTimersByTime(200);
-    expect(drawerEl.querySelector('.learn-title')!.textContent).toBe('Album');
+    expect(drawerEl.querySelector('.learn-title')!.textContent).toBe('Cinematic Slideshow');
 
-    drawer.setMode('collage');
+    drawer.setMode('wall-exhibition');
     vi.advanceTimersByTime(200);
-    expect(drawerEl.querySelector('.learn-title')!.textContent).toBe('Collage');
+    expect(drawerEl.querySelector('.learn-title')!.textContent).toBe('Wall Exhibition');
 
     vi.useRealTimers();
   });

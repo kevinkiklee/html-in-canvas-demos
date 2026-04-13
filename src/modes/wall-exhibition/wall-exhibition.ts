@@ -15,12 +15,14 @@ import { loadPhoto, formatExif } from '../../lib/photos';
 import vertexSrc from '../../shaders/vertex.glsl?raw';
 import lightingSrc from './gallery-lighting.frag?raw';
 
-function createWallHTML(root: HTMLElement, photos: Photo[]): void {
-  root.style.cssText = `
-    width: 100%;
-    padding: 4rem 0;
-    background: #0a0a0b;
-  `;
+// @ts-ignore unused during debug
+function _createWallHTML(root: HTMLElement, photos: Photo[], onImageLoad?: () => void): void {
+  // Merge styles instead of overwriting cssText — the caller may have set
+  // layout-critical properties (height, overflow) that must survive.
+  Object.assign(root.style, {
+    padding: '4rem 0',
+    background: '#0a0a0b',
+  });
 
   let i = 0;
   while (i < photos.length) {
@@ -34,12 +36,12 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
       section.dataset.index = String(i);
 
       const img = document.createElement('img');
-      img.loading = 'lazy';
+
       img.style.cssText = `
         width: 100%; object-fit: contain; cursor: pointer;
         box-shadow: 0 8px 40px rgba(0,0,0,0.5);
       `;
-      loadPhoto(img, photo, 800);
+      loadPhoto(img, photo, 800, onImageLoad);
 
       const plaque = document.createElement('div');
       plaque.style.cssText = `
@@ -77,12 +79,12 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
         card.style.cssText = `flex: 1; max-width: 360px; cursor: pointer;`;
 
         const img = document.createElement('img');
-        img.loading = 'lazy';
+  
         img.style.cssText = `
           width: 100%; object-fit: contain;
           box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         `;
-        loadPhoto(img, photo, 600);
+        loadPhoto(img, photo, 600, onImageLoad);
 
         const plaque = document.createElement('div');
         plaque.style.cssText = `margin-top: 0.75rem; text-align: center;`;
@@ -105,27 +107,43 @@ function createWallHTML(root: HTMLElement, photos: Photo[]): void {
 }
 
 export default function createWallExhibition(ctx: ModeContext): ModeImpl {
-  const { gl, canvas, photos, requestDraw, openDetail } = ctx;
+  const { gl, canvas, photos: _photos, requestDraw, openDetail: _openDetail } = ctx;
 
   // Root must have overflow:hidden — texElementImage2D crashes the GPU process
   // when called on elements with overflow:auto/scroll. The scroller div inside
   // handles actual scrolling; root is the texture capture target.
+  // DEBUG TEST: three variants to find what breaks texture capture
   const root = document.createElement('div');
   root.id = 'mode-root';
-  root.style.cssText = 'width: 100%; height: 100%; overflow: hidden;';
+  root.style.cssText = 'width: 100%; height: 100%; overflow: hidden; background: red;';
   canvas.appendChild(root);
 
+  // Test A: text directly on root (no scroller)
+  const textOnRoot = document.createElement('div');
+  textOnRoot.style.cssText = 'color: yellow; font-size: 3rem; padding: 1rem;';
+  textOnRoot.textContent = 'A: text on root';
+  root.appendChild(textOnRoot);
+
+  // Test B: scroller with text
   const scroller = document.createElement('div');
-  scroller.style.cssText = 'width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;';
+  scroller.style.cssText = 'width: 100%; height: 50%; overflow-y: auto; background: blue; color: white; font-size: 3rem; padding: 1rem;';
+  scroller.textContent = 'B: text on scroller (overflow-y:auto)';
   root.appendChild(scroller);
+
+  // Test C: plain div (no overflow) with text
+  const plain = document.createElement('div');
+  plain.style.cssText = 'width: 100%; height: 25%; background: green; color: black; font-size: 3rem; padding: 1rem;';
+  plain.textContent = 'C: text on plain div';
+  root.appendChild(plain);
 
   const tracker = new PaintTracker(gl);
   tracker.register(root, 'mode-root');
 
-  createWallHTML(scroller, photos);
-
   ctx.setModePaint((changedElements) => {
+    console.log('[wall] paint fired, changedElements:', changedElements.length,
+      changedElements.map(el => `${el.tagName}#${(el as HTMLElement).id || '?'}`));
     tracker.handlePaint(changedElements);
+    console.log('[wall] hasFirstPaint:', tracker.hasFirstPaint());
     requestDraw();
   });
 
@@ -134,15 +152,12 @@ export default function createWallExhibition(ctx: ModeContext): ModeImpl {
 
   canvas.requestPaint?.();
 
-  const onScroll = () => {
-    canvas.requestPaint?.();
-    requestDraw();
-  };
-  scroller.addEventListener('scroll', onScroll);
-
   const mode: ModeImpl = {
     paint(_dt: number) {
-      if (!tracker.hasFirstPaint()) return;
+      if (!tracker.hasFirstPaint()) {
+        console.log('[wall] paint(): no first paint yet');
+        return;
+      }
       const tex = tracker.getTexture('mode-root');
       if (!tex) return;
 
@@ -155,18 +170,10 @@ export default function createWallExhibition(ctx: ModeContext): ModeImpl {
       quad.draw();
     },
 
-    onPointer(ev: PointerEvent) {
-      if (ev.type === 'pointerdown') {
-        const card = (ev.target as HTMLElement).closest('[data-index]') as HTMLElement | null;
-        if (card) openDetail(parseInt(card.dataset.index!, 10));
-      }
-    },
-
     onResize() { requestDraw(); },
 
     destroy() {
       ctx.setModePaint(null);
-      scroller.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();
       root.remove();
