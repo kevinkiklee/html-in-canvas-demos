@@ -111,20 +111,11 @@ async function switchMode(name: ModeName): Promise<void> {
     learn.setMode(name);
   };
 
-  // View Transitions API: provides a cross-fade between old and new mode
-  // content. Falls back to an instant switch on browsers without the API.
-  // The transition animates the canvas surface itself, so the outgoing mode's
-  // last frame fades into the incoming mode's first frame.
+  // NOTE: View Transitions API is intentionally NOT used here. It conflicts
+  // with HTML-in-Canvas — the transition's snapshot capture can trigger
+  // texElementImage2D calls outside the paint handler, crashing the GPU process.
   try {
-    if (document.startViewTransition) {
-      // Await the transition's finished promise so the `switching` lock stays
-      // held until the new mode is fully initialized. Without this, the lock
-      // releases immediately and rapid clicks could trigger overlapping switches.
-      const transition = document.startViewTransition(doSwitch);
-      await transition.finished;
-    } else {
-      await doSwitch();
-    }
+    await doSwitch();
   } finally {
     switching = false;
   }
