@@ -33,11 +33,7 @@ export interface GalleryScene {
   photoSlots: PhotoSlot[];
   /** Wall AABBs for collision detection: { min: {x,z}, max: {x,z} } */
   wallColliders: Array<{ min: { x: number; z: number }; max: { x: number; z: number } }>;
-  /** World position of the kiosk top surface center */
-  kioskTopCenter: THREE.Vector3;
   kioskTopMesh: THREE.Mesh;
-  /** World position of the info panel center */
-  infoPanelCenter: THREE.Vector3;
   infoPanelMesh: THREE.Mesh;
   /** Ticker strip meshes */
   tickerMeshes: THREE.Mesh[];
@@ -380,8 +376,8 @@ export function createGalleryScene(aspect: number): GalleryScene {
   // ============================
   const infoPanelGeo = new THREE.PlaneGeometry(1.5, 1.2);
   const infoPanelMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-  // South wall, left of entrance
-  const infoPanelX = wxCenter - ROOM_W / 2 + southSegW / 2;
+  // South wall, left of entrance (offset to avoid overlapping the south wall photo at x=-4.5)
+  const infoPanelX = -3;
   const infoPanelZ = wzCenter + ROOM_D / 2 - WALL_THICKNESS / 2;
   const infoPanelMesh = new THREE.Mesh(infoPanelGeo, infoPanelMat);
   infoPanelMesh.position.set(infoPanelX, 1.5, infoPanelZ);
@@ -434,9 +430,7 @@ export function createGalleryScene(aspect: number): GalleryScene {
     camera,
     photoSlots,
     wallColliders,
-    kioskTopCenter: new THREE.Vector3(0, 1.05, -0.05),
     kioskTopMesh,
-    infoPanelCenter: new THREE.Vector3(infoPanelX, 1.5, infoPanelZ),
     infoPanelMesh,
     tickerMeshes,
     detailPanelMesh,

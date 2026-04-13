@@ -24,12 +24,13 @@ export interface InteractionSystem {
   dispose(): void;
 }
 
+// Reusable Vector2 for raycaster (always screen center)
+const _center = new THREE.Vector2(0, 0);
+
 export function createInteractionSystem(
   photoSlots: PhotoSlot[],
   kioskMesh: THREE.Mesh,
-  _kioskCenter: THREE.Vector3,
   infoPanelMesh: THREE.Mesh,
-  _infoPanelCenter: THREE.Vector3,
 ): InteractionSystem {
   const raycaster = new THREE.Raycaster();
   raycaster.far = 5;
@@ -45,7 +46,7 @@ export function createInteractionSystem(
     if (state !== 'walking') return;
 
     // Cast ray from camera center
-    raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+    raycaster.setFromCamera(_center, camera);
     const hits = raycaster.intersectObjects(allTargets, false);
 
     target = null;

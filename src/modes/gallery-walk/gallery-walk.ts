@@ -110,9 +110,7 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
   const interaction = createInteractionSystem(
     gallery.photoSlots,
     gallery.kioskTopMesh,
-    gallery.kioskTopCenter,
     gallery.infoPanelMesh,
-    gallery.infoPanelCenter,
   );
 
   // --- UI overlays (outside layoutsubtree) ---
@@ -167,6 +165,13 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
       const detailDom = hic.getDetailDom();
       detailDom.style.display = 'block';
       detailDom.style.pointerEvents = 'auto';
+
+      // Position detail panel 1.5m in front of camera
+      const cam = gallery.camera;
+      const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(cam.quaternion);
+      gallery.detailPanelMesh.position.copy(cam.position).add(dir.multiplyScalar(1.5));
+      gallery.detailPanelMesh.lookAt(cam.position);
+
       gallery.detailPanelMesh.visible = true;
       (gallery.detailPanelMesh.material as THREE.MeshBasicMaterial).visible = true;
       requestAnimationFrame(() => canvas.requestPaint?.());
@@ -237,9 +242,9 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
       // Update controls
       controls.update(dt);
 
-      // Expand staggered load radius
+      // Expand staggered load radius (~2m/sec, takes ~5s to fully load)
       if (loadRadius < maxLoadRadius) {
-        loadRadius = Math.min(loadRadius + 3, maxLoadRadius);
+        loadRadius = Math.min(loadRadius + 2 * dt, maxLoadRadius);
       }
 
       // Throttled proximity checks
