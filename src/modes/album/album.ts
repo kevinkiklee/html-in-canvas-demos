@@ -102,11 +102,13 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
   const texCurrent = createElementTexture(gl);
   const texNext = createElementTexture(gl);
 
-  // Album manages its own paint handler (not PaintTracker) because it needs
-  // two textures — current page and next page — uploaded in the same paint cycle.
+  // Album manages its own textures (not PaintTracker) because it needs two
+  // textures — current page and next page — uploaded in the same paint cycle.
   // safeTexUpload guards against disconnected/zero-size elements that crash the GPU.
-  const onPaint = ((e: PaintEvent) => {
-    for (const el of e.changedElements) {
+  // Uses the shell's single paint listener via ctx.setModePaint to avoid multiple
+  // paint listeners on the canvas (which crashes Chrome's experimental HiC API).
+  ctx.setModePaint((changedElements) => {
+    for (const el of changedElements) {
       if (el === pageEl) {
         safeTexUpload(gl, texCurrent, pageEl);
       }
@@ -115,8 +117,7 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
       }
     }
     requestDraw();
-  }) as EventListener;
-  canvas.addEventListener('paint', onPaint);
+  });
 
   const program = getCachedProgram(gl, vertexSrc, pageCurlSrc);
   // 40x30 tessellation: enough vertices for a smooth curl without visible faceting
@@ -224,7 +225,7 @@ export default function createAlbum(ctx: ModeContext): ModeImpl {
       turning = false;
       setAnimating(false);
 
-      canvas.removeEventListener('paint', onPaint);
+      ctx.setModePaint(null);
       canvas.style.cursor = '';
       gl.deleteTexture(texCurrent);
       gl.deleteTexture(texNext);

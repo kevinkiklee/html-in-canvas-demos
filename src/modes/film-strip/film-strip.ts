@@ -124,11 +124,10 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
 
   createStripHTML(root, photos);
 
-  const onPaint = ((e: PaintEvent) => {
-    tracker.handlePaint(e.changedElements);
+  ctx.setModePaint((changedElements) => {
+    tracker.handlePaint(changedElements);
     requestDraw();
-  }) as EventListener;
-  canvas.addEventListener('paint', onPaint);
+  });
 
   const program = getCachedProgram(gl, vertexSrc, curvatureSrc);
   const quad = createQuadVAO(gl);
@@ -175,7 +174,7 @@ export default function createFilmStrip(ctx: ModeContext): ModeImpl {
     onResize() { requestDraw(); },
 
     destroy() {
-      canvas.removeEventListener('paint', onPaint);
+      ctx.setModePaint(null);
       root.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();

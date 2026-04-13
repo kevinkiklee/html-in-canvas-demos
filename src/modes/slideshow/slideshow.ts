@@ -71,8 +71,10 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
   const texB = createElementTexture(gl);
 
   // safeTexUpload guards against disconnected/zero-size elements that crash the GPU.
-  const onPaint = ((e: PaintEvent) => {
-    for (const el of e.changedElements) {
+  // Uses the shell's single paint listener via ctx.setModePaint to avoid multiple
+  // paint listeners on the canvas (which crashes Chrome's experimental HiC API).
+  ctx.setModePaint((changedElements) => {
+    for (const el of changedElements) {
       const target = el as HTMLElement;
       if (target === slideA || target.id === 'slide-a') {
         safeTexUpload(gl, texA, slideA);
@@ -82,8 +84,7 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
       }
     }
     requestDraw();
-  }) as EventListener;
-  canvas.addEventListener('paint', onPaint);
+  });
 
   const passthroughProgram = getCachedProgram(gl, vertexSrc, passthroughSrc);
   const shaders = [
@@ -181,7 +182,7 @@ export default function createSlideshow(ctx: ModeContext): ModeImpl {
       transitioning = false;
       setAnimating(false);
 
-      canvas.removeEventListener('paint', onPaint);
+      ctx.setModePaint(null);
       canvas.style.cursor = '';
       gl.deleteTexture(texA);
       gl.deleteTexture(texB);

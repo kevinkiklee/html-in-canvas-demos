@@ -78,6 +78,10 @@ async function switchMode(name: ModeName): Promise<void> {
   switching = true;
 
   const doSwitch = async () => {
+    // Clear paint callback FIRST — prevents stale paint handlers from firing
+    // on elements that are about to be removed. The experimental HiC API
+    // crashes if texElementImage2D runs on a disconnecting element.
+    shell.setModePaintCallback(null);
     if (currentMode) {
       currentMode.destroy();
       currentMode = null;
@@ -102,6 +106,7 @@ async function switchMode(name: ModeName): Promise<void> {
       requestDraw: () => shell.requestDraw(),
       setAnimating: (a) => shell.setAnimating(a),
       openDetail,
+      setModePaint: (cb) => shell.setModePaintCallback(cb),
     };
 
     currentMode = module.default(ctx);

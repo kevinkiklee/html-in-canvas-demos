@@ -58,15 +58,16 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
   const texFront = createElementTexture(gl);
 
   // safeTexUpload guards against disconnected/zero-size elements that crash the GPU.
-  const onPaint = ((e: PaintEvent) => {
-    for (const el of e.changedElements) {
+  // Uses the shell's single paint listener via ctx.setModePaint to avoid multiple
+  // paint listeners on the canvas (which crashes Chrome's experimental HiC API).
+  ctx.setModePaint((changedElements) => {
+    for (const el of changedElements) {
       if (el === frontEl) {
         safeTexUpload(gl, texFront, frontEl);
       }
     }
     requestDraw();
-  }) as EventListener;
-  canvas.addEventListener('paint', onPaint);
+  });
 
   const program = getCachedProgram(gl, vertexSrc, paperWarpSrc);
   // 30x25 tessellation for smooth paper deformation during toss animation
@@ -203,7 +204,7 @@ export default function createStackedPrints(ctx: ModeContext): ModeImpl {
       tossing = false;
       setAnimating(false);
 
-      canvas.removeEventListener('paint', onPaint);
+      ctx.setModePaint(null);
       resetBtn.removeEventListener('click', onResetClick);
       resetBtn.removeEventListener('mouseenter', onResetEnter);
       resetBtn.removeEventListener('mouseleave', onResetLeave);

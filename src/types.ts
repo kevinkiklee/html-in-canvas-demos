@@ -36,6 +36,7 @@ export interface ModeContext {
   requestDraw: () => void;
   setAnimating: (animating: boolean) => void;
   openDetail: (photoIndex: number) => void;
+  setModePaint: (cb: ((changedElements: readonly Element[]) => void) | null) => void;
 }
 
 export interface ModeImpl {

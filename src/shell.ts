@@ -12,6 +12,7 @@ import vertexSrc from './shaders/vertex.glsl?raw';
 import passthroughSrc from './shaders/passthrough.frag?raw';
 
 export type ModeHook = (dt: number) => void;
+export type PaintCallback = (changedElements: readonly Element[]) => void;
 
 export class Shell {
   readonly canvas: HTMLCanvasElement;
@@ -26,6 +27,7 @@ export class Shell {
   private lastTime = 0;
   private modeHook: ModeHook | null = null;
   private overlayHook: ModeHook | null = null;
+  private modePaintCallback: PaintCallback | null = null;
   private passthroughProgram: WebGLProgram;
 
   size = { w: 0, h: 0 };
@@ -45,13 +47,14 @@ export class Shell {
     this.quad = createQuadVAO(this.gl);
     this.passthroughProgram = getCachedProgram(this.gl, vertexSrc, passthroughSrc);
 
-    // The `paint` event is the ONLY safe place to call texElementImage2D.
-    // Calling it outside this handler (e.g., in RAF or a click handler) crashes
-    // the GPU process. The browser fires `paint` after layout when subtree
-    // children have changed pixels — we upload textures here, then schedule a
-    // RAF frame to draw them.
+    // CRITICAL: Only ONE paint listener on the canvas. The experimental HiC API
+    // does not reliably handle multiple paint listeners — adding a second listener
+    // (e.g., per-mode) has been observed to crash the GPU process during mode
+    // switches. All paint processing goes through this single handler. Modes
+    // register a callback via setModePaintCallback() instead of adding their own.
     this.canvas.addEventListener('paint', ((e: PaintEvent) => {
       this.tracker.handlePaint(e.changedElements);
+      this.modePaintCallback?.(e.changedElements);
       this.dirty = true;
       this.wake();
     }) as EventListener);
@@ -173,6 +176,12 @@ export class Shell {
     this.overlayHook = hook;
   }
 
+  // Modes register their paint callback here instead of adding their own
+  // paint listener. This keeps a single paint listener on the canvas.
+  setModePaintCallback(cb: PaintCallback | null): void {
+    this.modePaintCallback = cb;
+  }
+
   requestDraw(): void {
     this.dirty = true;
     this.wake();
@@ -184,6 +193,7 @@ export class Shell {
   }
 
   clearCanvas(): void {
+    this.modePaintCallback = null;
     while (this.canvas.firstChild) {
       this.canvas.removeChild(this.canvas.firstChild);
     }

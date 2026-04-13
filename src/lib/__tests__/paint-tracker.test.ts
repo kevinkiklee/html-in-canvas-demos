@@ -42,9 +42,10 @@ function makeMockGL() {
 
 function makeEl(width = 100, height = 100): HTMLElement {
   const el = document.createElement('div');
-  // happy-dom doesn't lay out, so we stub offsetWidth/offsetHeight
+  // happy-dom doesn't lay out, so we stub offsetWidth/offsetHeight/isConnected
   Object.defineProperty(el, 'offsetWidth', { get: () => width, configurable: true });
   Object.defineProperty(el, 'offsetHeight', { get: () => height, configurable: true });
+  Object.defineProperty(el, 'isConnected', { get: () => width > 0 && height > 0, configurable: true });
   return el;
 }
 

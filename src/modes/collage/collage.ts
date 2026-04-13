@@ -119,11 +119,10 @@ export default function createCollage(ctx: ModeContext): ModeImpl {
 
   createCollageHTML(root, photos);
 
-  const onPaint = ((e: PaintEvent) => {
-    tracker.handlePaint(e.changedElements);
+  ctx.setModePaint((changedElements) => {
+    tracker.handlePaint(changedElements);
     requestDraw();
-  }) as EventListener;
-  canvas.addEventListener('paint', onPaint);
+  });
 
   const program = getCachedProgram(gl, vertexSrc, tiltShiftSrc);
   const quad = createQuadVAO(gl);
@@ -159,7 +158,7 @@ export default function createCollage(ctx: ModeContext): ModeImpl {
     onResize() { requestDraw(); },
 
     destroy() {
-      canvas.removeEventListener('paint', onPaint);
+      ctx.setModePaint(null);
       tracker.dispose();
       quad.dispose();
       root.remove();

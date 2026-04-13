@@ -80,11 +80,10 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
 
   createGridHTML(root, photos);
 
-  const onPaint = ((e: PaintEvent) => {
-    tracker.handlePaint(e.changedElements);
+  ctx.setModePaint((changedElements) => {
+    tracker.handlePaint(changedElements);
     requestDraw();
-  }) as EventListener;
-  canvas.addEventListener('paint', onPaint);
+  });
 
   const program = getCachedProgram(gl, vertexSrc, spotlightSrc);
   const quad = createQuadVAO(gl);
@@ -136,7 +135,7 @@ export default function createPrintTable(ctx: ModeContext): ModeImpl {
     onResize() { requestDraw(); },
 
     destroy() {
-      canvas.removeEventListener('paint', onPaint);
+      ctx.setModePaint(null);
       root.removeEventListener('scroll', onScroll);
       tracker.dispose();
       quad.dispose();
