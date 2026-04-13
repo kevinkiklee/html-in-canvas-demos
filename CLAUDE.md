@@ -6,14 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A photography portfolio rendered entirely inside a single `<canvas layoutsubtree>` element using the experimental **HTML-in-Canvas** (HiC) API. Real DOM elements live inside the canvas, are captured as WebGL2 textures via `texElementImage2D`, and drawn with custom GLSL shaders — while preserving full interactivity and accessibility.
 
-7 viewing modes, each a vanilla TypeScript module that plugs into a shared render shell. Each mode applies a different shader effect to live HTML content: page curl, film burn transitions, spotlight, tilt-shift, film curvature, gallery lighting, paper warp.
+5 viewing modes, each a vanilla TypeScript module that plugs into a shared render shell. The first four modes apply different shader effects to live HTML content: film burn transitions, spotlight, film curvature, gallery lighting. The fifth mode (gallery-walk) uses Three.js to render a first-person 3D museum with HiC textures injected into Three.js materials. A landing page is shown on boot before any mode is selected.
 
-**Status:** Implemented. All 7 modes, UI chrome, tests (154), and build pipeline complete.
+**Status:** Implemented. All 5 modes, UI chrome, tests, and build pipeline complete.
 
 ## Tech Stack
 
 - **Vite** + vanilla **TypeScript** (no runtime frameworks)
 - **WebGL2** (single shared context)
+- **Three.js** (gallery-walk mode only, code-split)
 - **HTML-in-Canvas API** (Chrome flag `chrome://flags/#canvas-draw-element`)
 - **Sharp** + **exif-reader** (build-time image processing)
 - **Vitest** (testing)
@@ -38,7 +39,7 @@ A photography portfolio rendered entirely inside a single `<canvas layoutsubtree
 
 - **Single canvas root:** One `<canvas layoutsubtree>` owns the WebGL2 context, the `paint` event listener, and the RAF loop. Modes never create their own context or loop.
 - **Shell + Mode pattern:** `src/shell.ts` manages the render loop and exposes hooks (`setModeHook`, `setOverlayHook`, `requestDraw`, `setAnimating`). Each mode implements `ModeImpl` (paint, destroy, optional event handlers).
-- **Two PaintTracker patterns:** Modes with a single root div (print-table, film-strip, wall-exhibition, collage) use `PaintTracker`. Modes with dual textures (album, slideshow, stacked-prints) manage textures manually via `safeTexUpload()`.
+- **Two PaintTracker patterns:** Modes with a single root div (print-table, film-strip, wall-exhibition) use `PaintTracker`. Slideshow manages dual textures manually via `safeTexUpload()`.
 - **Single paint listener:** Only ONE `paint` event listener exists on the canvas (in the shell). Modes register a callback via `ctx.setModePaint()` instead of adding their own listener. This prevents GPU crashes from the experimental API mishandling multiple concurrent paint handlers.
 - **Dirty-flag RAF loop:** Event-driven, not continuous. Runs only when paint fires, a mode requests a frame, or a mode declares itself animating.
 - **Code splitting:** Each mode is a dynamic `import()`, loaded only when activated. Shaders ship with their mode chunk.
@@ -80,13 +81,11 @@ src/
   about/about.ts       — About overlay
   detail/detail.ts     — Full-screen photo detail view
   modes/
-    album/             — Page curl (tessellated quad + vertex displacement)
     slideshow/         — 3 GLSL transitions (film burn, rack focus, lum dissolve)
     print-table/       — Cursor-following spotlight
-    collage/           — Tilt-shift miniature effect
     film-strip/        — Horizontal curvature shader
     wall-exhibition/   — Gallery overhead lighting
-    stacked-prints/    — Paper warp with grab-point deformation
+    gallery-walk/      — First-person 3D museum (Three.js + HiC textures)
   shaders/
     common.glsl        — Reference: srgbToLinear, linearToSrgb, hash21, etc.
     vertex.glsl        — Shared vertex shader
@@ -96,9 +95,20 @@ scripts/
   build-manifest.ts    — EXIF extraction, responsive WebP generation
 ```
 
+## Workflow: Documenting HiC Learnings
+
+Whenever you fix a bug related to HTML-in-Canvas, or discover new behavior / gotchas / crashes, **always** update both:
+
+1. **This file (`CLAUDE.md`)** — Add a new numbered entry to the "Critical Rules (HTML-in-Canvas)" section if it's a rule others must follow, or update an existing entry if it refines one.
+2. **`docs/html-in-canvas-research.md`** — Add the finding to the appropriate section (Gotchas, API behavior, CSS quirks, etc.) with enough detail that someone unfamiliar can understand and avoid the issue.
+
+This ensures hard-won knowledge about this experimental API is preserved for future sessions and contributors.
+
 ## Key References
 
 - `docs/html-in-canvas-research.md` — Complete API reference, architecture patterns, shader recipes, TypeScript augmentations, CSS behavior, and all known gotchas
-- `docs/superpowers/specs/2026-04-12-photo-portfolio-design.md` — Full design spec
-- `docs/superpowers/plans/2026-04-12-photo-portfolio.md` — Implementation plan (23 tasks)
+- `docs/superpowers/specs/2026-04-12-photo-portfolio-design.md` — Full design spec (original 4 modes)
+- `docs/superpowers/plans/2026-04-12-photo-portfolio.md` — Implementation plan (23 tasks, original 4 modes)
+- `docs/superpowers/specs/2026-04-13-gallery-walk-design.md` — Gallery walk mode design spec
+- `docs/superpowers/plans/2026-04-13-gallery-walk.md` — Gallery walk implementation plan (9 tasks)
 - WICG spec: https://github.com/WICG/html-in-canvas
