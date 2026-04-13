@@ -1,1 +1,174 @@
 /* Gallery Walk HiC element styles */
+
+/* Photo plaques */
+.gallery-plaque {
+  opacity: 0;
+  transition: opacity 300ms ease;
+  background: rgba(10, 10, 11, 0.85);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.gallery-plaque[style*="display: block"],
+.gallery-plaque[style*="display:block"] {
+  opacity: 1;
+}
+
+.gallery-plaque-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 14px;
+  color: #e8e4df;
+  margin-bottom: 4px;
+}
+
+.gallery-plaque-exif {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: #5a5650;
+}
+
+/* Detail panel */
+.gallery-detail-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 24px;
+  color: #e8e4df;
+  text-align: center;
+  padding: 16px 24px 4px;
+}
+
+.gallery-detail-desc {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 14px;
+  color: #8a8680;
+  text-align: center;
+  padding: 0 24px 8px;
+}
+
+.gallery-detail-exif {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #5a5650;
+  text-align: center;
+  padding: 0 24px 16px;
+}
+
+.gallery-detail-nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 8px;
+}
+
+.gallery-detail-btn {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  color: #e8e4df;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 8px 20px;
+  cursor: pointer;
+}
+
+/* Info panel */
+.gallery-info-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px;
+  color: #e8e4df;
+  margin-bottom: 12px;
+}
+
+.gallery-info-statement {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 13px;
+  color: #8a8680;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.gallery-info-works {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.gallery-info-work-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  color: #8a8680;
+}
+
+/* Ticker */
+.gallery-ticker-content {
+  white-space: nowrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: #8a8680;
+  line-height: 40px;
+}
+
+@keyframes gallery-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* Crosshair overlay (outside layoutsubtree) */
+.gallery-crosshair {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.gallery-crosshair.interactive {
+  width: 12px;
+  height: 12px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.gallery-prompt {
+  position: fixed;
+  top: calc(50% + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  pointer-events: none;
+  z-index: 100;
+}
+
+.gallery-enter-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 200;
+  cursor: pointer;
+}
+
+.gallery-enter-overlay h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2rem;
+  color: #e8e4df;
+  margin-bottom: 0.5rem;
+}
+
+.gallery-enter-overlay p {
+  font-family: Inter, system-ui, sans-serif;
+  font-size: 0.9rem;
+  color: #8a8680;
+}
