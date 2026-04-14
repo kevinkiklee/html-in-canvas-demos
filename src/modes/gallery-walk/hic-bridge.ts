@@ -5,8 +5,13 @@ import { formatExif } from '../../lib/photos';
 export interface HiCEntry {
   id: string;
   dom: HTMLElement;
-  glTexture: WebGLTexture;
-  threeTexture: THREE.Texture;
+  /** Staging GL texture — written by texElementImage2D, never seen by Three.js */
+  stagingTexture: WebGLTexture;
+  /** Three.js DataTexture — fully managed by Three.js, updated from readPixels */
+  dataTexture: THREE.DataTexture;
+  width: number;
+  height: number;
+  pixelBuffer: Uint8Array;
   lastUploadTime: number;
   /** Minimum ms between uploads (0 = no throttle) */
   uploadThrottleMs: number;
@@ -15,7 +20,9 @@ export interface HiCEntry {
 export interface HiCBridge {
   entries: Map<string, HiCEntry>;
   paintCallback: (changedElements: readonly Element[]) => void;
-  /** Set the material map for a photo slot */
+  /** Register an external DOM element (e.g. kiosk, ticker) as an HiC entry */
+  registerEntry(id: string, dom: HTMLElement, width: number, height: number, throttleMs?: number): HiCEntry;
+  /** Set the material map for a registered entry */
   bindToMaterial(entryId: string, material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial): void;
   /** Toggle plaque visibility for a photo */
   showPlaque(index: number, visible: boolean): void;
@@ -39,33 +46,59 @@ export function createHiCBridge(
 ): HiCBridge {
   const entries = new Map<string, HiCEntry>();
 
-  function createGLTexture(): WebGLTexture {
+  // Shared framebuffer for readPixels from staging textures
+  const readFBO = gl.createFramebuffer()!;
+
+  /** Create a staging GL texture at the specified dimensions */
+  function createStagingTexture(w: number, h: number): WebGLTexture {
     const tex = gl.createTexture()!;
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    // 1x1 placeholder
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
-      gl.UNSIGNED_BYTE, new Uint8Array([10, 10, 11, 255]));
+    // Pre-allocate at element dimensions so texElementImage2D has the right storage
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA,
+      gl.UNSIGNED_BYTE, null);
     return tex;
   }
 
-  function createThreeTexture(glTex: WebGLTexture): THREE.Texture {
-    const texture = new THREE.Texture();
-    texture.isRenderTargetTexture = true;
+  /** Create a Three.js DataTexture (fully managed by Three.js — no __webglTexture injection) */
+  function createDataTexture(w: number, h: number, pixelBuffer: Uint8Array): THREE.DataTexture {
+    const texture = new THREE.DataTexture(pixelBuffer, w, h);
     texture.colorSpace = THREE.SRGBColorSpace;
     texture.flipY = false;
-    (renderer.properties.get(texture) as any).__webglTexture = glTex;
+    texture.generateMipmaps = false;
+    texture.minFilter = THREE.LinearFilter;
+    texture.magFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
     return texture;
   }
 
-  function registerEntry(id: string, dom: HTMLElement, throttleMs = 0): HiCEntry {
-    const glTexture = createGLTexture();
-    const threeTexture = createThreeTexture(glTexture);
+  function registerEntry(id: string, dom: HTMLElement, width: number, height: number, throttleMs = 0): HiCEntry {
+    const stagingTexture = createStagingTexture(width, height);
+    const pixelBuffer = new Uint8Array(width * height * 4);
+    const dataTexture = createDataTexture(width, height, pixelBuffer);
+
+    // Force Three.js to fully initialize the texture now (creates GL texture via
+    // texStorage2D, uploads initial data, sets texture parameters).
+    renderer.initTexture(dataTexture);
+
+    // Fix mip completeness: Three.js's getMipLevels() computes the full mipmap chain
+    // (e.g. 10 levels for 512×384) and passes it to texStorage2D, but only uploads
+    // level 0. With generateMipmaps=false this SHOULD be fine for LINEAR sampling,
+    // but macOS ANGLE/Metal treats the unfilled levels as "texture incomplete" and
+    // renders a checkerboard. Setting TEXTURE_MAX_LEVEL=0 tells the driver only
+    // level 0 matters, making the texture complete.
+    const glTex = (renderer.properties.get(dataTexture) as any).__webglTexture;
+    if (glTex) {
+      gl.bindTexture(gl.TEXTURE_2D, glTex);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAX_LEVEL, 0);
+    }
+
     const entry: HiCEntry = {
-      id, dom, glTexture, threeTexture,
+      id, dom, stagingTexture, dataTexture,
+      width, height, pixelBuffer,
       lastUploadTime: 0,
       uploadThrottleMs: throttleMs,
     };
@@ -104,7 +137,7 @@ export function createHiCBridge(
     div.append(img, plaque);
     canvas.appendChild(div);
 
-    registerEntry(`photo-${i}`, div);
+    registerEntry(`photo-${i}`, div, 512, 384);
   }
 
   // --- Detail panel DOM ---
@@ -164,7 +197,7 @@ export function createHiCBridge(
 
   detailDom.append(detailImg, detailTitle, detailDesc, detailExif, detailNav);
   canvas.appendChild(detailDom);
-  registerEntry('detail', detailDom);
+  registerEntry('detail', detailDom, 800, 600);
 
   // --- Info panel DOM ---
   const infoDom = document.createElement('div');
@@ -201,7 +234,7 @@ export function createHiCBridge(
   infoScroller.appendChild(worksList);
   infoDom.appendChild(infoScroller);
   canvas.appendChild(infoDom);
-  registerEntry('info-panel', infoDom);
+  registerEntry('info-panel', infoDom, 600, 480);
 
   // --- Paint callback ---
   const paintCallback = (changedElements: readonly Element[]) => {
@@ -224,12 +257,25 @@ export function createHiCBridge(
         continue;
       }
 
-      gl.bindTexture(gl.TEXTURE_2D, entry.glTexture);
+      // 1. Upload DOM element to staging GL texture via texElementImage2D
+      gl.bindTexture(gl.TEXTURE_2D, entry.stagingTexture);
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
       (gl as any).texElementImage2D(
         gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, entry.dom,
       );
       gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, false);
+
+      // 2. Read pixels back from staging texture into CPU buffer
+      gl.bindFramebuffer(gl.FRAMEBUFFER, readFBO);
+      gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
+        gl.TEXTURE_2D, entry.stagingTexture, 0);
+      gl.readPixels(0, 0, entry.width, entry.height,
+        gl.RGBA, gl.UNSIGNED_BYTE, entry.pixelBuffer);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
+      // 3. Mark DataTexture for Three.js re-upload
+      entry.dataTexture.needsUpdate = true;
+
       entry.lastUploadTime = now;
       anyUploaded = true;
     }
@@ -243,7 +289,7 @@ export function createHiCBridge(
   function bindToMaterial(entryId: string, material: THREE.MeshStandardMaterial | THREE.MeshBasicMaterial) {
     const entry = entries.get(entryId);
     if (entry) {
-      material.map = entry.threeTexture;
+      material.map = entry.dataTexture;
       material.needsUpdate = true;
     }
   }
@@ -295,16 +341,18 @@ export function createHiCBridge(
 
   function dispose() {
     for (const [_id, entry] of entries) {
-      gl.deleteTexture(entry.glTexture);
-      entry.threeTexture.dispose();
+      gl.deleteTexture(entry.stagingTexture);
+      entry.dataTexture.dispose();
       entry.dom.remove();
     }
     entries.clear();
+    gl.deleteFramebuffer(readFBO);
   }
 
   return {
     entries,
     paintCallback,
+    registerEntry,
     bindToMaterial,
     showPlaque,
     setInert,

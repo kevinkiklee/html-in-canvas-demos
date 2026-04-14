@@ -218,11 +218,25 @@ export function createGalleryScene(aspect: number): GalleryScene {
   // ============================
   // LIGHTING
   // ============================
-  const ambient = new THREE.AmbientLight(0x2a2018, 0.15);
+  // Ambient fill — enough to see the room
+  const ambient = new THREE.AmbientLight(0xfff0d0, 0.4);
   scene.add(ambient);
 
+  // Hemisphere light: warm ceiling bounce + cool floor
+  const hemi = new THREE.HemisphereLight(0xfff0d0, 0x2a2018, 0.35);
+  scene.add(hemi);
+
+  // Overhead point lights — one per wing, general room illumination
+  const westOverhead = new THREE.PointLight(0xfff0d0, 0.8, 20);
+  westOverhead.position.set(wxCenter, ROOM_H - 0.3, wzCenter);
+  scene.add(westOverhead);
+
+  const eastOverhead = new THREE.PointLight(0xfff0d0, 0.8, 20);
+  eastOverhead.position.set(exOff, ROOM_H - 0.3, ezCenter);
+  scene.add(eastOverhead);
+
   // Passage point light
-  const passLight = new THREE.PointLight(0xfff0d0, 0.5, 15);
+  const passLight = new THREE.PointLight(0xfff0d0, 0.6, 15);
   passLight.position.set(ROOM_W / 2 + PASSAGE_W / 2, PASSAGE_H - 0.3, 0);
   scene.add(passLight);
 

@@ -51,54 +51,18 @@ export default function createGalleryWalk(ctx: ModeContext): ModeImpl {
 
   // --- Kiosk ---
   const kiosk = createKioskDom(canvas);
-  // Register kiosk DOM with HiC bridge
-  {
-    const gltex = gl.createTexture()!;
-    gl.bindTexture(gl.TEXTURE_2D, gltex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
-      gl.UNSIGNED_BYTE, new Uint8Array([10, 10, 11, 255]));
-    const threeTex = new THREE.Texture();
-    threeTex.isRenderTargetTexture = true;
-    threeTex.colorSpace = THREE.SRGBColorSpace;
-    threeTex.flipY = false;
-    (renderer.properties.get(threeTex) as any).__webglTexture = gltex;
-    hic.entries.set('kiosk', {
-      id: 'kiosk', dom: kiosk.dom, glTexture: gltex,
-      threeTexture: threeTex, lastUploadTime: 0, uploadThrottleMs: 0,
-    });
-    (gallery.kioskTopMesh.material as THREE.MeshStandardMaterial).map = threeTex;
-    (gallery.kioskTopMesh.material as THREE.MeshStandardMaterial).needsUpdate = true;
-  }
+  const kioskEntry = hic.registerEntry('kiosk', kiosk.dom, 400, 300);
+  (gallery.kioskTopMesh.material as THREE.MeshStandardMaterial).map = kioskEntry.dataTexture;
+  (gallery.kioskTopMesh.material as THREE.MeshStandardMaterial).needsUpdate = true;
 
   // --- Ticker ---
   const ticker = createTickerDom(canvas, photos);
-  function registerTickerEntry(id: string, dom: HTMLElement, mesh: THREE.Mesh) {
-    const gltex = gl.createTexture()!;
-    gl.bindTexture(gl.TEXTURE_2D, gltex);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA,
-      gl.UNSIGNED_BYTE, new Uint8Array([10, 10, 11, 255]));
-    const threeTex = new THREE.Texture();
-    threeTex.isRenderTargetTexture = true;
-    threeTex.colorSpace = THREE.SRGBColorSpace;
-    threeTex.flipY = false;
-    (renderer.properties.get(threeTex) as any).__webglTexture = gltex;
-    hic.entries.set(id, {
-      id, dom, glTexture: gltex, threeTexture: threeTex,
-      lastUploadTime: 0, uploadThrottleMs: 100,
-    });
-    (mesh.material as THREE.MeshBasicMaterial).map = threeTex;
-    (mesh.material as THREE.MeshBasicMaterial).needsUpdate = true;
-  }
-  registerTickerEntry('ticker-west', ticker.westDom, gallery.tickerMeshes[0]);
-  registerTickerEntry('ticker-east', ticker.eastDom, gallery.tickerMeshes[1]);
+  const tickerWestEntry = hic.registerEntry('ticker-west', ticker.westDom, 1280, 40, 100);
+  (gallery.tickerMeshes[0].material as THREE.MeshBasicMaterial).map = tickerWestEntry.dataTexture;
+  (gallery.tickerMeshes[0].material as THREE.MeshBasicMaterial).needsUpdate = true;
+  const tickerEastEntry = hic.registerEntry('ticker-east', ticker.eastDom, 1280, 40, 100);
+  (gallery.tickerMeshes[1].material as THREE.MeshBasicMaterial).map = tickerEastEntry.dataTexture;
+  (gallery.tickerMeshes[1].material as THREE.MeshBasicMaterial).needsUpdate = true;
 
   // Bind info panel texture
   hic.bindToMaterial('info-panel', gallery.infoPanelMesh.material as THREE.MeshStandardMaterial);
